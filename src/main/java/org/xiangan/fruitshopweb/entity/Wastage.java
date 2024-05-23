@@ -1,0 +1,84 @@
+package org.xiangan.fruitshopweb.entity;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+import lombok.Data;
+
+import java.util.Date;
+import java.util.Objects;
+
+/**
+ * 損耗表
+ */
+@Data
+@Entity
+@Table(name = "wastage")
+public class Wastage {
+	
+	/**
+	 * 主鍵
+	 */
+	@Basic(optional = false)
+	@Column(nullable = false)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Id
+	private long id;
+	
+	/**
+	 * 產品
+	 */
+	@JoinColumn(
+		name = "product",
+		nullable = false,
+		referencedColumnName = "id"
+	)
+	@ManyToOne(optional = false)
+	private Product product;
+	
+	/**
+	 * 數量
+	 */
+	@Column(name = "quantity")
+	private Double quantity;
+	
+	/**
+	 * 日期
+	 */
+	@Basic(optional = false)
+	@Column(
+		name = "date",
+		nullable = false
+	)
+	@NotNull
+	@Temporal(TemporalType.TIMESTAMP)
+	@JsonFormat(
+		pattern = "yyyy-MM-dd'T'HH:mm:ssX",
+		timezone = "Asia/Taipei"
+	)
+	private Date date;
+	
+	/**
+	 * 默認構造函式
+	 */
+	public Wastage() {
+		date = new Date(
+			System.currentTimeMillis()
+		);
+	}
+	
+	@Override
+	public boolean equals(Object o) {
+		if (this == o)
+			return true;
+		if (o == null || getClass() != o.getClass())
+			return false;
+		Wastage wastage = (Wastage) o;
+		return Objects.equals(id, wastage.id) && Objects.equals(product, wastage.product) && Objects.equals(quantity, wastage.quantity) && Objects.equals(date, wastage.date);
+	}
+	
+	@Override
+	public int hashCode() {
+		return Objects.hash(id, product, quantity, date);
+	}
+}
