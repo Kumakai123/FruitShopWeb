@@ -23,6 +23,7 @@ public class Purchase {
 	@Column(name = "id", nullable = false)
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Id
+	@JsonFormat(shape = JsonFormat.Shape.STRING)
 	private long id;
 	
 	/**

@@ -1,5 +1,6 @@
 package org.xiangan.fruitshopweb.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
@@ -13,18 +14,30 @@ import java.util.Objects;
 @Data
 @Entity
 @NoArgsConstructor
-@Table(name = "consignor")
+@Table(
+	name = "consignor",
+	uniqueConstraints = {
+		@UniqueConstraint(
+			columnNames = {
+				"number",
+				"company"
+			}
+		)
+	}
+)
 public class Consignor {
 	
 	/**
 	 * 主鍵
 	 */
+	@Basic(optional = false)
 	@Column(
 		name = "id",
 		nullable = false
 	)
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Id
+	@JsonFormat(shape = JsonFormat.Shape.STRING)
 	private long id;
 	
 	/**
@@ -60,11 +73,10 @@ public class Consignor {
 	private String company;
 	
 	/**
-	 * 預設建構子
-	 * @param lastName 姓氏
-	 * @param firstName 名字
+	 * @param lastName    姓氏
+	 * @param firstName   名字
 	 * @param phoneNumber 連絡電話
-	 * @param company 公司行號/統編
+	 * @param company     公司行號/統編
 	 */
 	public Consignor(
 		String lastName,

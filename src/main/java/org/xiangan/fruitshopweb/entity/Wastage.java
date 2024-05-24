@@ -23,6 +23,7 @@ public class Wastage {
 	@Column(nullable = false)
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Id
+	@JsonFormat(shape = JsonFormat.Shape.STRING)
 	private long id;
 	
 	/**

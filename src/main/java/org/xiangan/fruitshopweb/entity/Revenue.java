@@ -24,6 +24,7 @@ public class Revenue {
 	@Column(nullable = false)
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Id
+	@JsonFormat(shape = JsonFormat.Shape.STRING)
 	private long id;
 	
 	/**
