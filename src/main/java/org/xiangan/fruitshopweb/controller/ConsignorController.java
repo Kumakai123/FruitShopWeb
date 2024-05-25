@@ -9,7 +9,6 @@ import org.xiangan.fruitshopweb.entity.Consignor;
 import org.xiangan.fruitshopweb.model.PaginationRequest;
 import org.xiangan.fruitshopweb.service.ConsignorService;
 
-import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 
 /**
@@ -120,7 +119,7 @@ public class ConsignorController {
 		@RequestParam final String firstName,
 		@RequestParam final String phoneNumber,
 		@RequestParam final String company
-	){
+	) {
 		Consignor consignor;
 		try {
 			consignor = consignorService.load(id).get();
@@ -134,17 +133,17 @@ public class ConsignorController {
 				exception
 			);
 		}
-
-		if (!lastName.isBlank()){
+		
+		if (!lastName.isBlank()) {
 			consignor.setLastName(lastName.trim());
 		}
-		if (!firstName.isBlank()){
+		if (!firstName.isBlank()) {
 			consignor.setFirstName(firstName.trim());
 		}
-		if (!phoneNumber.isBlank()){
+		if (!phoneNumber.isBlank()) {
 			consignor.setPhoneNumber(phoneNumber.trim());
 		}
-		if (!company.isBlank()){
+		if (!company.isBlank()) {
 			consignor.setCompany(company.trim());
 		}
 		
@@ -169,7 +168,7 @@ public class ConsignorController {
 	 * @return 是否刪除
 	 */
 	@DeleteMapping("/{id:^\\d+$}")
-	Boolean delete(@PathVariable final long id){
+	Boolean delete(@PathVariable final long id) {
 		Consignor consignor;
 		try {
 			consignor = consignorService.load(id).get();

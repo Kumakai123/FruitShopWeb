@@ -6,7 +6,7 @@ import org.springframework.stereotype.Repository;
 import org.xiangan.fruitshopweb.entity.Product;
 
 /**
- *
+ * (數據存取對象)產品
  */
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Long>, JpaSpecificationExecutor<Product> {

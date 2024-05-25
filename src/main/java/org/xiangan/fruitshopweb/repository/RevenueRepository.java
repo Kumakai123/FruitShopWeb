@@ -6,7 +6,7 @@ import org.springframework.stereotype.Repository;
 import org.xiangan.fruitshopweb.entity.Revenue;
 
 /**
- *
+ * (數據存取對象)營業狀況
  */
 @Repository
 public interface RevenueRepository extends JpaRepository<Revenue, Long>, JpaSpecificationExecutor<Revenue> {

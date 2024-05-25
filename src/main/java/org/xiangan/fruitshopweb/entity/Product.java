@@ -13,7 +13,17 @@ import java.util.Objects;
  */
 @Data
 @Entity
-@Table(name = "product")
+@Table(
+	name = "product",
+	uniqueConstraints = {
+		@UniqueConstraint(
+			columnNames = {
+				"product_name",
+				"unit_price"
+			}
+		)
+	}
+)
 public class Product {
 	
 	/**
@@ -79,14 +89,15 @@ public class Product {
 	 * 默認構造函式
 	 */
 	public Product() {
+		unitPrice = BigDecimal.ZERO;
 		inventory = 0;
 	}
 	
 	/**
 	 * @param productName 產品名稱
-	 * @param type 產品類型(列舉)
-	 * @param unitType 單位(列舉)
-	 * @param consignor 貨主
+	 * @param type        產品類型(列舉)
+	 * @param unitType    單位(列舉)
+	 * @param consignor   貨主
 	 */
 	public Product(String productName, String type, String unitType, Consignor consignor) {
 		this();

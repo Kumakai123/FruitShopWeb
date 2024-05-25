@@ -1,6 +1,9 @@
 package org.xiangan.fruitshopweb.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
@@ -29,8 +32,19 @@ public class Purchase {
 	/**
 	 * 產品
 	 */
-	@OneToMany(mappedBy = "product")
-	private Set<Product> product;
+	@JoinColumn(
+		name = "product",
+		nullable = false,
+		referencedColumnName = "id"
+	)
+	@ManyToOne(optional = false)
+	@JsonFormat(shape = JsonFormat.Shape.STRING)
+	@JsonIdentityInfo(
+		generator = ObjectIdGenerators.PropertyGenerator.class,
+		property = "id"
+	)
+	@JsonIdentityReference(alwaysAsId = true)
+	private Product product;
 	
 	/**
 	 * 數量
@@ -42,11 +56,7 @@ public class Purchase {
 	/**
 	 * 開單日期
 	 */
-	@Basic(optional = false)
-	@Column(
-		name = "order_date",
-		nullable = false
-	)
+	@Column(name = "order_date")
 	@NotNull
 	@Temporal(TemporalType.TIMESTAMP)
 	@JsonFormat(

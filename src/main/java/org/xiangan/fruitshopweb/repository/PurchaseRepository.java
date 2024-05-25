@@ -6,7 +6,7 @@ import org.springframework.stereotype.Repository;
 import org.xiangan.fruitshopweb.entity.Purchase;
 
 /**
- *
+ * (數據存取對象)進貨單
  */
 @Repository
 public interface PurchaseRepository extends JpaRepository<Purchase, Long>, JpaSpecificationExecutor<Purchase> {
