@@ -1,6 +1,9 @@
 package org.xiangan.fruitshopweb.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
@@ -35,12 +38,23 @@ public class Wastage {
 		referencedColumnName = "id"
 	)
 	@ManyToOne(optional = false)
+	@JsonFormat(shape = JsonFormat.Shape.STRING)
+	@JsonIdentityInfo(
+		generator = ObjectIdGenerators.PropertyGenerator.class,
+		property = "id"
+	)
+	@JsonIdentityReference(alwaysAsId = true)
 	private Product product;
 	
 	/**
 	 * 數量
 	 */
-	@Column(name = "quantity")
+	@Basic(optional = false)
+	@Column(
+		name = "quantity",
+		nullable = false,
+		precision = 1
+	)
 	private Double quantity;
 	
 	/**
@@ -63,6 +77,7 @@ public class Wastage {
 	 * 默認構造函式
 	 */
 	public Wastage() {
+		quantity = 0.0;
 		date = new Date(
 			System.currentTimeMillis()
 		);

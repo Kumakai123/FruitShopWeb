@@ -1,6 +1,7 @@
 package org.xiangan.fruitshopweb.controller;
 
 import jakarta.validation.constraints.NotNull;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -21,6 +22,7 @@ import java.util.concurrent.ExecutionException;
  */
 @RestController
 @RequestMapping("/purchase")
+@Slf4j
 public class PurchaseController {
 	
 	@Autowired
@@ -67,7 +69,7 @@ public class PurchaseController {
 	@PostMapping
 	Purchase create(
 		@RequestParam("product") @NotNull(message = "產品不可為空❗") final Long productId,
-		@RequestParam @NotNull(message = "產品不可為空❗") final Double quantity,
+		@RequestParam @NotNull(message = "進貨數量不可為空❗") final Double quantity,
 		@RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ssX") final Date receivingDate
 	) {
 		Purchase purchase = new Purchase();
@@ -190,7 +192,7 @@ public class PurchaseController {
 		} catch (InterruptedException | ExecutionException exception) {
 			throw new RuntimeException(
 				String.format(
-					"讀取貨主「%d」時拋出線程中斷異常：%s❗",
+					"讀取進貨單「%d」時拋出線程中斷異常：%s❗",
 					id,
 					exception.getLocalizedMessage()
 				),
@@ -233,7 +235,7 @@ public class PurchaseController {
 		} catch (InterruptedException | ExecutionException exception) {
 			throw new RuntimeException(
 				String.format(
-					"編輯貨主「%d」時拋出線程中斷異常：%s❗",
+					"編輯進貨單「%d」時拋出線程中斷異常：%s❗",
 					id,
 					exception.getLocalizedMessage()
 				),

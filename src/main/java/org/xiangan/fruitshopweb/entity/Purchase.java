@@ -49,8 +49,11 @@ public class Purchase {
 	/**
 	 * 數量
 	 */
-	@Basic
-	@Column(name = "quantity")
+	@Basic(optional = false)
+	@Column(
+		name = "quantity",
+		nullable = false
+	)
 	private Double quantity;
 	
 	/**
