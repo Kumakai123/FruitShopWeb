@@ -11,6 +11,8 @@ import java.util.Objects;
 
 /**
  * 營運狀況
+ *
+ * @author kyle
  */
 @Data
 @Entity
@@ -30,12 +32,7 @@ public class Revenue {
 	/**
 	 * 登記日
 	 */
-	@Basic(optional = false)
-	@Column(
-		name = "record_date",
-		nullable = false
-	)
-	@NotNull
+	@Column(name = "record_date")
 	@Temporal(TemporalType.DATE)
 	@JsonFormat(
 		pattern = "yyyy-MM-dd",
@@ -109,6 +106,9 @@ public class Revenue {
 	)
 	private BigDecimal wastage;
 	
+	/**
+	 * 默認建構子
+	 */
 	public Revenue() {
 		recordDate = new Date(
 			System.currentTimeMillis()

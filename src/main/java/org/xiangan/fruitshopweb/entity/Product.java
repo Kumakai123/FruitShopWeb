@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
+import org.xiangan.fruitshopweb.enumType.UnitTypeEnum;
+import org.xiangan.fruitshopweb.enumType.UnitTypeEnumConverter;
 
 import java.math.BigDecimal;
 import java.util.Objects;
@@ -63,9 +65,11 @@ public class Product {
 	 */
 	@Basic(optional = false)
 	@Column(name = "unit_type", nullable = false)
+	@Convert(converter = UnitTypeEnumConverter.class)
+	@Enumerated(EnumType.STRING)
 	@NotNull
-	private String unitType;
-	
+	private UnitTypeEnum unitType;
+
 	/**
 	 * 貨主
 	 */
@@ -99,7 +103,7 @@ public class Product {
 	 * @param unitType    單位(列舉)
 	 * @param consignor   貨主
 	 */
-	public Product(String productName, String type, String unitType, Consignor consignor) {
+	public Product(String productName, String type, UnitTypeEnum unitType, Consignor consignor) {
 		this();
 		this.productName = productName;
 		this.type = type;

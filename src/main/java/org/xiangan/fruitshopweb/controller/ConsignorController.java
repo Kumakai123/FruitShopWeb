@@ -19,7 +19,9 @@ import java.util.concurrent.ExecutionException;
 @Slf4j
 public class ConsignorController {
 	
-	
+	/**
+	 * (服務層) 貨主
+	 */
 	@Autowired
 	private ConsignorService consignorService;
 	
@@ -32,11 +34,9 @@ public class ConsignorController {
 	@GetMapping
 	Page<Consignor> browse(@Validated final PaginationRequest paginationRequest) {
 		final int p = paginationRequest.getP();
-		
 		try {
 			return consignorService
 				       .load(
-					       
 					       p < 1 ? 0 : p - 1,
 					       paginationRequest.getS()
 				       )

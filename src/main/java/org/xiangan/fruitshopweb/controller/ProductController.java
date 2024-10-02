@@ -7,6 +7,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.xiangan.fruitshopweb.entity.Consignor;
 import org.xiangan.fruitshopweb.entity.Product;
+import org.xiangan.fruitshopweb.enumType.UnitTypeEnum;
 import org.xiangan.fruitshopweb.model.PaginationRequest;
 import org.xiangan.fruitshopweb.service.ConsignorService;
 import org.xiangan.fruitshopweb.service.ProductService;
@@ -72,7 +73,7 @@ public class ProductController {
 		@RequestParam @NotNull(message = "產品名稱不可為空❗") final String productName,
 		@RequestParam @NotNull(message = "產品單價不可為空❗") final BigDecimal unitPrice,
 		@RequestParam @NotNull(message = "產品類型不可為空❗") final String type,
-		@RequestParam @NotNull(message = "單位不可為空❗") final String unitType,
+		@RequestParam @NotNull(message = "單位不可為空❗") final UnitTypeEnum unitType,
 		@RequestParam("consignorId") final long consignorId,
 		@RequestParam final double inventory
 	) {
