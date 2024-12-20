@@ -46,7 +46,7 @@ public class Consignor {
 	@Basic(optional = false)
 	@Column(name = "lastName")
 	@NotNull
-	private String lastName;
+	private String nickName;
 
 	/**
 	 * 名字
@@ -54,7 +54,7 @@ public class Consignor {
 	@Basic(optional = false)
 	@Column(name = "firstName")
 	@NotNull
-	private String firstName;
+	private String name;
 
 	/**
 	 * 連絡電話
@@ -73,19 +73,19 @@ public class Consignor {
 	private String company;
 
 	/**
-	 * @param lastName    姓氏
-	 * @param firstName   名字
+	 * @param nickName    姓氏
+	 * @param name   	  名字
 	 * @param phoneNumber 連絡電話
 	 * @param company     公司行號/統編
 	 */
 	public Consignor(
-			String lastName,
-			String firstName,
+			String nickName,
+			String name,
 			String phoneNumber,
 			String company
 	) {
-		this.lastName = lastName;
-		this.firstName = firstName;
+		this.nickName = nickName;
+		this.name = name;
 		this.phoneNumber = phoneNumber;
 		this.company = company;
 	}
@@ -97,13 +97,13 @@ public class Consignor {
 		if (o == null || getClass() != o.getClass())
 			return false;
 		Consignor consignor = (Consignor) o;
-		return id == consignor.id && Objects.equals(lastName, consignor.lastName) &&
-				Objects.equals(firstName, consignor.firstName) && Objects.equals(phoneNumber, consignor.phoneNumber)
+		return id == consignor.id && Objects.equals(nickName, consignor.nickName) &&
+				Objects.equals(name, consignor.name) && Objects.equals(phoneNumber, consignor.phoneNumber)
 				&& Objects.equals(company, consignor.company);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(id, lastName, firstName, phoneNumber, company);
+		return Objects.hash(id, nickName, name, phoneNumber, company);
 	}
 }

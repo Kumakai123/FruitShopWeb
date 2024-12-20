@@ -18,13 +18,13 @@ import java.util.concurrent.ExecutionException;
 @RequestMapping("/consignor")
 @Slf4j
 public class ConsignorController {
-	
+
 	/**
 	 * (服務層) 貨主
 	 */
 	@Autowired
 	private ConsignorService consignorService;
-	
+
 	/**
 	 * 瀏覽
 	 *
@@ -51,7 +51,7 @@ public class ConsignorController {
 			);
 		}
 	}
-	
+
 	/**
 	 * 讀取
 	 *
@@ -75,30 +75,30 @@ public class ConsignorController {
 			);
 		}
 	}
-	
+
 	/**
 	 * 建立
 	 *
-	 * @param lastName    姓氏
-	 * @param firstName   名字
+	 * @param nickName    姓氏
+	 * @param name   名字
 	 * @param phoneNumber 連絡電話
 	 * @param company     公司行號/統編
 	 * @return 貨主
 	 */
 	@PostMapping
 	Consignor create(
-		@RequestParam final String lastName,
-		@RequestParam final String firstName,
+		@RequestParam final String nickName,
+		@RequestParam final String name,
 		@RequestParam final String phoneNumber,
 		@RequestParam final String company
 	) {
 		Consignor consignor = new Consignor(
-			lastName.trim(),
-			firstName.trim(),
+			nickName.trim(),
+			name.trim(),
 			phoneNumber.trim(),
 			company.trim()
 		);
-		
+
 		try {
 			return consignorService.save(consignor).get();
 		} catch (InterruptedException | ExecutionException exception) {
@@ -111,12 +111,12 @@ public class ConsignorController {
 			);
 		}
 	}
-	
+
 	@PostMapping("/{id:^\\d+$}")
 	Consignor update(
 		@PathVariable final long id,
-		@RequestParam final String lastName,
-		@RequestParam final String firstName,
+		@RequestParam final String nickName,
+		@RequestParam final String name,
 		@RequestParam final String phoneNumber,
 		@RequestParam final String company
 	) {
@@ -133,12 +133,12 @@ public class ConsignorController {
 				exception
 			);
 		}
-		
-		if (!lastName.isBlank()) {
-			consignor.setLastName(lastName.trim());
+
+		if (!nickName.isBlank()) {
+			consignor.setNickName(nickName.trim());
 		}
-		if (!firstName.isBlank()) {
-			consignor.setFirstName(firstName.trim());
+		if (!name.isBlank()) {
+			consignor.setName(name.trim());
 		}
 		if (!phoneNumber.isBlank()) {
 			consignor.setPhoneNumber(phoneNumber.trim());
@@ -146,7 +146,7 @@ public class ConsignorController {
 		if (!company.isBlank()) {
 			consignor.setCompany(company.trim());
 		}
-		
+
 		try {
 			return consignorService.save(consignor).get();
 		} catch (InterruptedException | ExecutionException exception) {
@@ -160,7 +160,7 @@ public class ConsignorController {
 			);
 		}
 	}
-	
+
 	/**
 	 * 刪除
 	 *
@@ -182,7 +182,7 @@ public class ConsignorController {
 				exception
 			);
 		}
-		
+
 		try {
 			return consignorService.delete(consignor).get();
 		} catch (InterruptedException | ExecutionException exception) {

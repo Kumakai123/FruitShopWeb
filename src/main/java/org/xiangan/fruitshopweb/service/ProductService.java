@@ -1,5 +1,6 @@
 package org.xiangan.fruitshopweb.service;
 
+import jakarta.persistence.criteria.Predicate;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
@@ -13,6 +14,8 @@ import org.xiangan.fruitshopweb.entity.Product_;
 import org.xiangan.fruitshopweb.repository.ProductRepository;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
@@ -94,28 +97,59 @@ public class ProductService {
 	
 	/**
 	 * @param p 頁數
-	 * @param s 一頁幾筆
+	 * @param s 一 頁幾筆
+	 * @param isAll 是否找全部的產品
 	 * @return 可分頁的產品
 	 */
 	@Async
 	@Transactional(readOnly = true)
-	public CompletableFuture<Page<Product>> load(final int p, final int s) {
+	public CompletableFuture<Page<Product>> load(final int p, final int s,Boolean isAll) {
 		return CompletableFuture.completedFuture(
 			productRepository
 				.findAll(
 					(root, criteriaQuery, criteriaBuilder) -> {
+					List<Predicate> predicates = new ArrayList<>();
+						if (isAll){
+							predicates.add(criteriaBuilder.greaterThan(root.get(Product_.INVENTORY),0));
+						}
 						criteriaQuery.orderBy(
 							criteriaBuilder.asc(root.get(Product_.productName)),
 							criteriaBuilder.asc(root.get(Product_.unitPrice)),
 							criteriaBuilder.asc(root.get(Product_.inventory))
 						);
-						return criteriaBuilder.conjunction();
+						return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
 					},
 					PageRequest.of(p, s)
 				)
 		);
 	}
-	
+
+	/**
+	 * @param isAll 是否找全部的產品
+	 * @return 產品們
+	 */
+	@Async
+	@Transactional(readOnly = true)
+	public CompletableFuture<List<Product>> load(Boolean isAll) {
+		return CompletableFuture.completedFuture(
+			productRepository
+				.findAll(
+					(root, criteriaQuery, criteriaBuilder) -> {
+						List<Predicate> predicates = new ArrayList<>();
+						if (isAll){
+							predicates.add(criteriaBuilder.greaterThan(root.get(Product_.INVENTORY),0));
+						}
+						criteriaQuery.orderBy(
+							criteriaBuilder.asc(root.get(Product_.productName)),
+							criteriaBuilder.asc(root.get(Product_.unitPrice)),
+							criteriaBuilder.asc(root.get(Product_.inventory))
+						);
+						return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
+					}
+				)
+		);
+	}
+
 	/**
 	 * @param id 主鍵
 	 * @return 產品
@@ -185,7 +219,7 @@ public class ProductService {
 		} catch (Exception exception) {
 			throw new RuntimeException(
 				String.format(
-					"持久化貨主時拋出線程中斷異常：%s❗️",
+					"持久化產品時拋出線程中斷異常：%s❗️",
 					exception.getLocalizedMessage()
 				),
 				exception

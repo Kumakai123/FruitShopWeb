@@ -13,6 +13,8 @@ import org.xiangan.fruitshopweb.service.ConsignorService;
 import org.xiangan.fruitshopweb.service.ProductService;
 
 import java.math.BigDecimal;
+import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 
 /**
@@ -32,20 +34,43 @@ public class ProductController {
 	 * 瀏覽
 	 *
 	 * @param paginationRequest 分頁請求
+	 * @param isAll 是否找全部的產品,true:全部 | false:搜尋庫存大於 0 的
 	 * @return 可分頁的產品
 	 */
-	@GetMapping
-	Page<Product> browse(@Validated final PaginationRequest paginationRequest) {
+	@GetMapping("/paged")
+	Page<Product> browse(@Validated final PaginationRequest paginationRequest,@RequestParam Boolean isAll) {
 		final int p = paginationRequest.getP();
-		
+		 isAll = !Objects.isNull(isAll);
 		try {
 			return productService
 				       .load(
 					       
 					       p < 1 ? 0 : p - 1,
-					       paginationRequest.getS()
+					       paginationRequest.getS(),
+						   isAll
 				       )
 				       .get();
+		} catch (InterruptedException | ExecutionException exception) {
+			throw new RuntimeException(
+				String.format(
+					"瀏覽產品時拋出線程中斷異常：%s❗",
+					exception.getLocalizedMessage()
+				),
+				exception
+			);
+		}
+	}
+	/**
+	 * 瀏覽
+	 *
+	 * @param isAll 是否找全部的產品,true:全部 | false:搜尋庫存大於 0 的
+	 * @return 可分頁的產品
+	 */
+	@GetMapping("/list")
+	List<Product> browse(@RequestParam Boolean isAll) {
+		 isAll = !Objects.isNull(isAll);
+		try {
+			return productService.load(isAll).get();
 		} catch (InterruptedException | ExecutionException exception) {
 			throw new RuntimeException(
 				String.format(
@@ -197,10 +222,10 @@ public class ProductController {
 		}
 		
 		if (!lastName.isBlank()) {
-			consignor.setLastName(lastName.trim());
+			consignor.setNickName(lastName.trim());
 		}
 		if (!firstName.isBlank()) {
-			consignor.setFirstName(firstName.trim());
+			consignor.setName(firstName.trim());
 		}
 		if (!phoneNumber.isBlank()) {
 			consignor.setPhoneNumber(phoneNumber.trim());
