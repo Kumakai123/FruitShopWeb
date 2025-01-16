@@ -38,6 +38,13 @@ public class MiscellaneousService {
 
     }
 
+    @Async
+    public CompletableFuture<List<Miscellaneous>> load(){
+        return CompletableFuture.completedFuture(
+            miscellaneousRepo.findAll()
+        );
+    }
+
     /**
      * 查詢日期內的雜物清單
      * 小於某日的

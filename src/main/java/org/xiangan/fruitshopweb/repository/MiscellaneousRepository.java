@@ -13,7 +13,4 @@ import java.util.Date;
 @Repository
 public interface MiscellaneousRepository
     extends JpaRepository<Miscellaneous, Long>, JpaSpecificationExecutor<Miscellaneous> {
-    Miscellaneous findByfindByRecordDate( Date date);
-    Miscellaneous findByNameAndRecordDate(String name, Date date);
-
 }

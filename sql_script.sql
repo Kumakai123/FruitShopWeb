@@ -1,7 +1,7 @@
 use fruitShop;
 -- revenue table
 CREATE TABLE IF NOT EXISTS `revenue` (
-                                         `id` CHAR(36) PRIMARY KEY,
+    `id` CHAR(36) PRIMARY KEY,
     `record_date` date default (now()) NOT NULL,
     `gross_income` DECIMAL(10, 2) NOT NULL DEFAULT 0,
     `net_income` DECIMAL(10, 2) NOT NULL DEFAULT 0,
@@ -24,7 +24,7 @@ ALTER TABLE `revenue` MODIFY COLUMN `wastage` DECIMAL(10, 2) COMMENT '損耗';
 
 -- consignor table
 CREATE TABLE IF NOT EXISTS `consignor` (
-                                           `id` CHAR(36) PRIMARY KEY,
+    `id` CHAR(36) PRIMARY KEY,
     `lastName` VARCHAR(255) NOT NULL,
     `firstName` VARCHAR(255) NOT NULL,
     `number` VARCHAR(255) NOT NULL,
@@ -41,7 +41,7 @@ ALTER TABLE `consignor` MODIFY COLUMN `company` VARCHAR(255) COMMENT '市場行�
 
 -- product table
 CREATE TABLE IF NOT EXISTS `product` (
-                                         `id` CHAR(36) PRIMARY KEY,
+    `id` CHAR(36) PRIMARY KEY,
     `product_name` VARCHAR(255) NOT NULL,
     `unit_price` DECIMAL(10, 2) NOT NULL,
     `type` VARCHAR(255) NOT NULL,
@@ -63,7 +63,7 @@ ALTER TABLE `product` MODIFY COLUMN `inventory` FLOAT(10, 2) COMMENT '庫存';
 
 -- purchase table
 CREATE TABLE IF NOT EXISTS `purchase` (
-                                          `id` CHAR(36) PRIMARY KEY,
+    `id` CHAR(36) PRIMARY KEY,
     `product` CHAR(36) NOT NULL,
     `quantity` FLOAT(10, 2) NOT NULL DEFAULT '0',
     `date` DATE NOT NULL,
@@ -78,7 +78,7 @@ ALTER TABLE `purchase` MODIFY COLUMN `date` DATE COMMENT '日期';
 
 -- wastage table
 CREATE TABLE IF NOT EXISTS `wastage` (
-                                         `id` CHAR(36) PRIMARY KEY,
+     `id` CHAR(36) PRIMARY KEY,
     `product` CHAR(36) NOT NULL,
     `quantity` FLOAT(10, 2) NOT NULL DEFAULT '0',
     `date` date default (now()) NOT NULL,
@@ -91,3 +91,15 @@ ALTER TABLE `wastage` MODIFY COLUMN `product` CHAR(36) COMMENT '產品';
 ALTER TABLE `wastage` MODIFY COLUMN `quantity` FLOAT(10, 2) COMMENT '數量';
 ALTER TABLE `wastage` MODIFY COLUMN `date` DATE COMMENT '日期';
 
+CREATE TABLE IF NOT EXISTS `miscellaneous` (
+    `id` INT NOT NULL PRIMARY KEY COMMENT '主鍵',
+    `name` VARCHAR(255) NOT NULL COMMENT '名稱',
+    `amount` DECIMAL(10, 2) NOT NULL DEFAULT 0 COMMENT '花費金額',
+    `date` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '紀錄日期'
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='雜物';
+
+ALTER TABLE `miscellaneous` COMMENT '雜物';
+ALTER TABLE `miscellaneous` MODIFY COLUMN `id` INT COMMENT '主鍵';
+ALTER TABLE `miscellaneous` MODIFY COLUMN `name` VARCHAR(255) COMMENT '名稱';
+ALTER TABLE `miscellaneous` MODIFY COLUMN `amount` DECIMAL(10, 2) COMMENT '花費金額';
+ALTER TABLE `miscellaneous` MODIFY COLUMN `date` DATETIME COMMENT '紀錄日期';
