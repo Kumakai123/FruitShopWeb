@@ -41,10 +41,10 @@ public class Consignor {
 	private long id;
 
 	/**
-	 * 姓氏
+	 * 暱稱/稱呼
 	 */
 	@Basic(optional = false)
-	@Column(name = "lastName")
+	@Column(name = "nickName")
 	@NotNull
 	private String nickName;
 
@@ -52,7 +52,7 @@ public class Consignor {
 	 * 名字
 	 */
 	@Basic(optional = false)
-	@Column(name = "firstName")
+	@Column(name = "name")
 	@NotNull
 	private String name;
 
