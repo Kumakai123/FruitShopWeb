@@ -44,7 +44,7 @@ public class Consignor {
 	 * 暱稱/稱呼
 	 */
 	@Basic(optional = false)
-	@Column(name = "nickName")
+	@Column(name = "nick_name")
 	@NotNull
 	private String nickName;
 

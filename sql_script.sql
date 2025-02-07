@@ -23,21 +23,16 @@ ALTER TABLE `revenue` MODIFY COLUMN `miscellaneous_expense` DECIMAL(10, 2) COMME
 ALTER TABLE `revenue` MODIFY COLUMN `wastage` DECIMAL(10, 2) COMMENT '損耗';
 
 -- consignor table
-CREATE TABLE IF NOT EXISTS `consignor` (
-    `id` CHAR(36) PRIMARY KEY,
-    `lastName` VARCHAR(255) NOT NULL,
-    `firstName` VARCHAR(255) NOT NULL,
-    `number` VARCHAR(255) NOT NULL,
-    `company` VARCHAR(255) NOT NULL,
-    UNIQUE KEY `number_company` (`number`, `company`)
-    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+CREATE TABLE consignor (
+    id        CHAR(36)     NOT NULL COMMENT '主鍵(UUID)',
+    nick_name VARCHAR(100) NOT NULL COMMENT '暱稱/稱呼',
+    name      VARCHAR(100) DEFAULT NULL COMMENT '名字',
+    number    VARCHAR(50)  NOT NULL COMMENT '號碼',
+    company   VARCHAR(100) NOT NULL COMMENT '市場行號',
+    PRIMARY KEY (id),
+    UNIQUE KEY uq_number_company (number, company)
+) COMMENT '貨主';
 
-ALTER TABLE `consignor` COMMENT '貨主';
-ALTER TABLE `consignor` MODIFY COLUMN `id` CHAR(36) COMMENT '主鍵(UUID)';
-ALTER TABLE `consignor` MODIFY COLUMN `lastName` VARCHAR(255) COMMENT '姓氏';
-ALTER TABLE `consignor` MODIFY COLUMN `firstName` VARCHAR(255) COMMENT '名字';
-ALTER TABLE `consignor` MODIFY COLUMN `number` VARCHAR(255) COMMENT '號碼';
-ALTER TABLE `consignor` MODIFY COLUMN `company` VARCHAR(255) COMMENT '市場行號';
 
 -- product table
 CREATE TABLE IF NOT EXISTS `product` (
