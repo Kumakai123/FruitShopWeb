@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
+import org.xiangan.fruitshopweb.enumType.ProductTypeEnum;
+import org.xiangan.fruitshopweb.enumType.ProductTypeEnumConverter;
 import org.xiangan.fruitshopweb.enumType.UnitTypeEnum;
 import org.xiangan.fruitshopweb.enumType.UnitTypeEnumConverter;
 
@@ -55,10 +57,13 @@ public class Product {
 	/**
 	 * 產品類型(列舉)
 	 */
+	// TODO 修正成列舉類別
 	@Basic(optional = false)
 	@Column(name = "type", nullable = false)
+	@Convert(converter = ProductTypeEnumConverter.class)
+	@Enumerated(EnumType.STRING)
 	@NotNull
-	private String type;
+	private ProductTypeEnum type;
 	
 	/**
 	 * 單位(列舉)
@@ -103,7 +108,7 @@ public class Product {
 	 * @param unitType    單位(列舉)
 	 * @param consignor   貨主
 	 */
-	public Product(String productName, String type, UnitTypeEnum unitType, Consignor consignor) {
+	public Product(String productName, ProductTypeEnum type, UnitTypeEnum unitType, Consignor consignor) {
 		this();
 		this.productName = productName;
 		this.type = type;

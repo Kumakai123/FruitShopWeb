@@ -7,6 +7,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.xiangan.fruitshopweb.entity.Consignor;
 import org.xiangan.fruitshopweb.entity.Product;
+import org.xiangan.fruitshopweb.enumType.ProductTypeEnum;
 import org.xiangan.fruitshopweb.enumType.UnitTypeEnum;
 import org.xiangan.fruitshopweb.model.PaginationRequest;
 import org.xiangan.fruitshopweb.service.ConsignorService;
@@ -97,7 +98,7 @@ public class ProductController {
 	Product create(
 		@RequestParam @NotNull(message = "產品名稱不可為空❗") final String productName,
 		@RequestParam @NotNull(message = "產品單價不可為空❗") final BigDecimal unitPrice,
-		@RequestParam @NotNull(message = "產品類型不可為空❗") final String type,
+		@RequestParam @NotNull(message = "產品類型不可為空❗") final ProductTypeEnum type,
 		@RequestParam @NotNull(message = "單位不可為空❗") final UnitTypeEnum unitType,
 		@RequestParam("consignorId") final long consignorId,
 		@RequestParam final double inventory
@@ -202,10 +203,10 @@ public class ProductController {
 	@PostMapping("/{id:^\\d+$}")
 	Consignor update(
 		@PathVariable final long id,
-		@RequestParam final String lastName,
-		@RequestParam final String firstName,
-		@RequestParam final String phoneNumber,
-		@RequestParam final String company
+		@RequestParam(required = false)  final String lastName,
+		@RequestParam(required = false)  final String firstName,
+		@RequestParam(required = false) final String phoneNumber,
+		@RequestParam(required = false)  final String company
 	) {
 		Consignor consignor;
 		try {
