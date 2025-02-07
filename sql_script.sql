@@ -1,4 +1,4 @@
-create database fruitshop;
+create database fruitShop;
 use fruitShop;
 -- revenue table
 CREATE TABLE IF NOT EXISTS fruitshop.revenue (

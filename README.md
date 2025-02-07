@@ -77,3 +77,9 @@ src
 │       └── static                 # 靜態資源（未來用於前端整合）
 └── test
     ├── java                       # 測試代碼目錄
+```
+
+## TODO
+
+1. add the "person" table.
+2. Optimize the foreign key relationship between the "consignor" and "person" tables.
