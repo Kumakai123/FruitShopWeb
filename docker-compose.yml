@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   app:
     build:
@@ -11,9 +9,13 @@ services:
       SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL}
       SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
       SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
-      SPRING_JPA_HIBERNATE_DDL_AUTO: ${SPRING_JPA_HIBERNATE_DDL_AUTO}
+      SPRING_JPA_HIBERNATE_DDL_AUTO: ${SPRING_JPA_HIBERNATE_DDL_AUTO:-update}
     depends_on:
-      - database
+      database:
+        condition: service_healthy  # Make sure MySQL is healthy before starting
+      restart: unless-stopped  # 確保異常停止時自動重啟
+      networks:
+        - backend
 
   database:
     image: mysql:8.0
@@ -30,6 +32,12 @@ services:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
       interval: 10s
       retries: 5
+      timeout: 5s
+      networks:
+        - backend
 
 volumes:
   db_data:
+
+networks:
+  backend:
