@@ -1,12 +1,15 @@
 package org.xiangan.fruitshopweb.entity;
 
+import com.aventrix.jnanoid.jnanoid.NanoIdUtils;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.UuidGenerator;
 
 import java.util.Objects;
+import java.util.UUID;
 
 /**
  * 貨主
@@ -30,15 +33,13 @@ public class Consignor {
 	/**
 	 * 主鍵
 	 */
-	@Basic(optional = false)
 	@Column(
-			name = "id",
-			nullable = false
+			nullable = false,
+			updatable = false,
+			length = 11
 	)
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Id
-	@JsonFormat(shape = JsonFormat.Shape.STRING)
-	private long id;
+	private String id;
 
 	/**
 	 * 暱稱/稱呼
@@ -71,6 +72,18 @@ public class Consignor {
 	@Column(name = "company")
 	@NotNull
 	private String company;
+
+	@PrePersist
+	protected void genPrimaryKey() {
+		if (id == null) {
+			id = NanoIdUtils
+				.randomNanoId(
+					NanoIdUtils.DEFAULT_NUMBER_GENERATOR,
+					NanoIdUtils.DEFAULT_ALPHABET,
+					10)
+				.replace("-", "");
+		}
+	}
 
 	/**
 	 * @param nickName    姓氏

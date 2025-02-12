@@ -75,7 +75,7 @@ public class ProductService {
 	@Async
 	@Transactional(readOnly = true)
 	public CompletableFuture<Boolean> exist(
-		final long id,
+		final String id,
 		final String productName,
 		final BigDecimal unitPrice
 	) {
@@ -178,7 +178,7 @@ public class ProductService {
 	@Async
 	@Transactional
 	public CompletableFuture<Product> save(final Product entity) {
-		final Long id = entity.getId();
+		final String id = entity.getId();
 		final String productName = entity.getProductName();
 		final BigDecimal unitPrice = entity.getUnitPrice();
 		

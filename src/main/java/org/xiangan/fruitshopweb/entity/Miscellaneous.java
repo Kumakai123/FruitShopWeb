@@ -1,5 +1,6 @@
 package org.xiangan.fruitshopweb.entity;
 
+import com.aventrix.jnanoid.jnanoid.NanoIdUtils;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -18,12 +19,16 @@ import java.sql.Date;
 @Table(name = "miscellaneous")
 public class Miscellaneous {
 
-    @Basic(optional = false)
-    @Column(name = "id", nullable = false)
+    /**
+     * 主鍵
+     */
+    @Column(
+        nullable = false,
+        updatable = false,
+        length = 11
+    )
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @JsonFormat(shape = JsonFormat.Shape.STRING)
-    private long id;
+    private String id;
 
     /**
      * 名稱
@@ -48,6 +53,18 @@ public class Miscellaneous {
     @Temporal(TemporalType.DATE)
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm", timezone = "Asia/Taipei")
     private Date recordDate;
+
+    @PrePersist
+    protected void genPrimaryKey() {
+        if (id == null) {
+            id = NanoIdUtils
+                .randomNanoId(
+                    NanoIdUtils.DEFAULT_NUMBER_GENERATOR,
+                    NanoIdUtils.DEFAULT_ALPHABET,
+                    10)
+                .replace("-", "");
+        }
+    }
 
     /**
      * 默認建構子

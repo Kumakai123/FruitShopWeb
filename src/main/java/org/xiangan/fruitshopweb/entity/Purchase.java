@@ -1,5 +1,6 @@
 package org.xiangan.fruitshopweb.entity;
 
+import com.aventrix.jnanoid.jnanoid.NanoIdUtils;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIdentityReference;
@@ -19,16 +20,18 @@ import java.util.Set;
 @Entity
 @Table(name = "purchase")
 public class Purchase {
-	
+
 	/**
 	 * 主鍵
 	 */
-	@Column(name = "id", nullable = false)
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(
+		nullable = false,
+		updatable = false,
+		length = 11
+	)
 	@Id
-	@JsonFormat(shape = JsonFormat.Shape.STRING)
-	private long id;
-	
+	private String id;
+
 	/**
 	 * 產品
 	 */
@@ -83,7 +86,19 @@ public class Purchase {
 		timezone = "Asia/Taipei"
 	)
 	private Date receivingDate;
-	
+
+	@PrePersist
+	protected void genPrimaryKey() {
+		if (id == null) {
+			id = NanoIdUtils
+				.randomNanoId(
+					NanoIdUtils.DEFAULT_NUMBER_GENERATOR,
+					NanoIdUtils.DEFAULT_ALPHABET,
+					10)
+				.replace("-", "");
+		}
+	}
+
 	/**
 	 * 默認構造函式
 	 */

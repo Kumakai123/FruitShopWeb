@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.xiangan.fruitshopweb.entity.Consignor;
 import org.xiangan.fruitshopweb.entity.Product;
+import org.xiangan.fruitshopweb.enumType.ProductTypeEnum;
 import org.xiangan.fruitshopweb.service.ConsignorService;
 import org.xiangan.fruitshopweb.service.ProductService;
 
@@ -25,7 +26,7 @@ public class ProductTest {
     void create() {
         Product product = new Product();
         product.setProductName("肯德基");
-        product.setType("速食");
+        product.setType(ProductTypeEnum.FRUIT);
         product.setInventory(166);
         product.setUnitPrice(BigDecimal.valueOf(100));
 

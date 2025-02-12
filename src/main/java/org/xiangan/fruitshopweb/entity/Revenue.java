@@ -1,5 +1,6 @@
 package org.xiangan.fruitshopweb.entity;
 
+import com.aventrix.jnanoid.jnanoid.NanoIdUtils;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -18,17 +19,18 @@ import java.util.Objects;
 @Entity
 @Table(name = "revenue")
 public class Revenue {
-	
+
 	/**
 	 * 主鍵
 	 */
-	@Basic(optional = false)
-	@Column(nullable = false)
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(
+		nullable = false,
+		updatable = false,
+		length = 11
+	)
 	@Id
-	@JsonFormat(shape = JsonFormat.Shape.STRING)
-	private long id;
-	
+	private String id;
+
 	/**
 	 * 登記日
 	 */
@@ -105,7 +107,19 @@ public class Revenue {
 		precision = 2
 	)
 	private BigDecimal wastage;
-	
+
+	@PrePersist
+	protected void genPrimaryKey() {
+		if (id == null) {
+			id = NanoIdUtils
+				.randomNanoId(
+					NanoIdUtils.DEFAULT_NUMBER_GENERATOR,
+					NanoIdUtils.DEFAULT_ALPHABET,
+					10)
+				.replace("-", "");
+		}
+	}
+
 	/**
 	 * 默認建構子
 	 */
