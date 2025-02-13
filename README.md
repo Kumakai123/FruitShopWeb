@@ -83,3 +83,4 @@ src
 
 1. add the "person" table.
 2. Optimize the foreign key relationship between the "consignor" and "person" tables.
+3. 使用排程計算營運狀況(視情況再加入Line Message API 通知手機功能)
