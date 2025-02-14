@@ -6,6 +6,7 @@
 
 本專案是一個基於 **Spring Boot** 的水果記帳系統，旨在提供方便的記錄、管理和查詢水果的購買和消費明細。通過 **REST API** 
 提供後端服務，並支援資料的安全存取和高效操作。未來將持續擴展功能，提升系統的易用性和安全性。
+Swagger Demo:http://localhost:8000/swagger-ui/index.html
 
 ## **我做到了什麼**
 

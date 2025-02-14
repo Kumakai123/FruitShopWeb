@@ -100,7 +100,7 @@ public class ProductController {
 		@RequestParam @NotNull(message = "產品單價不可為空❗") final BigDecimal unitPrice,
 		@RequestParam @NotNull(message = "產品類型不可為空❗") final ProductTypeEnum type,
 		@RequestParam @NotNull(message = "單位不可為空❗") final UnitTypeEnum unitType,
-		@RequestParam("consignorId") final long consignorId,
+		@RequestParam("consignorId") final String consignorId,
 		@RequestParam final double inventory
 	) {
 		Product product = new Product();
@@ -146,35 +146,35 @@ public class ProductController {
 	 * @param id 主鍵
 	 * @return 是否刪除
 	 */
-	@DeleteMapping("/{id:^\\d+$}")
-	Boolean delete(@PathVariable final long id) {
-		Consignor consignor;
-		try {
-			consignor = consignorService.load(id).get();
-		} catch (InterruptedException | ExecutionException exception) {
-			throw new RuntimeException(
-				String.format(
-					"讀取貨主「%d」時拋出線程中斷異常：%s❗",
-					id,
-					exception.getLocalizedMessage()
-				),
-				exception
-			);
-		}
-		
-		try {
-			return consignorService.delete(consignor).get();
-		} catch (InterruptedException | ExecutionException exception) {
-			throw new RuntimeException(
-				String.format(
-					"刪除貨主「%d」時拋出線程中斷異常：%s❗️",
-					id,
-					exception.getLocalizedMessage()
-				),
-				exception
-			);
-		}
-	}
+//	@DeleteMapping("/{id:^\\d+$}")
+//	Boolean delete(@PathVariable final long id) {
+//		Consignor consignor;
+//		try {
+//			consignor = consignorService.load(id).get();
+//		} catch (InterruptedException | ExecutionException exception) {
+//			throw new RuntimeException(
+//				String.format(
+//					"讀取貨主「%d」時拋出線程中斷異常：%s❗",
+//					id,
+//					exception.getLocalizedMessage()
+//				),
+//				exception
+//			);
+//		}
+//
+//		try {
+//			return consignorService.delete(consignor).get();
+//		} catch (InterruptedException | ExecutionException exception) {
+//			throw new RuntimeException(
+//				String.format(
+//					"刪除貨主「%d」時拋出線程中斷異常：%s❗️",
+//					id,
+//					exception.getLocalizedMessage()
+//				),
+//				exception
+//			);
+//		}
+//	}
 	
 	/**
 	 * 讀取
@@ -200,52 +200,52 @@ public class ProductController {
 		}
 	}
 	
-	@PostMapping("/{id:^\\d+$}")
-	Consignor update(
-		@PathVariable final long id,
-		@RequestParam(required = false)  final String lastName,
-		@RequestParam(required = false)  final String firstName,
-		@RequestParam(required = false) final String phoneNumber,
-		@RequestParam(required = false)  final String company
-	) {
-		Consignor consignor;
-		try {
-			consignor = consignorService.load(id).get();
-		} catch (InterruptedException | ExecutionException exception) {
-			throw new RuntimeException(
-				String.format(
-					"讀取貨主「%d」時拋出線程中斷異常：%s❗",
-					id,
-					exception.getLocalizedMessage()
-				),
-				exception
-			);
-		}
-		
-		if (!lastName.isBlank()) {
-			consignor.setNickName(lastName.trim());
-		}
-		if (!firstName.isBlank()) {
-			consignor.setName(firstName.trim());
-		}
-		if (!phoneNumber.isBlank()) {
-			consignor.setPhoneNumber(phoneNumber.trim());
-		}
-		if (!company.isBlank()) {
-			consignor.setCompany(company.trim());
-		}
-		
-		try {
-			return consignorService.save(consignor).get();
-		} catch (InterruptedException | ExecutionException exception) {
-			throw new RuntimeException(
-				String.format(
-					"編輯貨主「%d」時拋出線程中斷異常：%s❗",
-					id,
-					exception.getLocalizedMessage()
-				),
-				exception
-			);
-		}
-	}
+//	@PostMapping("/{id:^\\d+$}")
+//	Consignor update(
+//		@PathVariable final long id,
+//		@RequestParam(required = false)  final String lastName,
+//		@RequestParam(required = false)  final String firstName,
+//		@RequestParam(required = false) final String phoneNumber,
+//		@RequestParam(required = false)  final String company
+//	) {
+//		Consignor consignor;
+//		try {
+//			consignor = consignorService.load(id).get();
+//		} catch (InterruptedException | ExecutionException exception) {
+//			throw new RuntimeException(
+//				String.format(
+//					"讀取貨主「%d」時拋出線程中斷異常：%s❗",
+//					id,
+//					exception.getLocalizedMessage()
+//				),
+//				exception
+//			);
+//		}
+//
+//		if (!lastName.isBlank()) {
+//			consignor.setNickName(lastName.trim());
+//		}
+//		if (!firstName.isBlank()) {
+//			consignor.setName(firstName.trim());
+//		}
+//		if (!phoneNumber.isBlank()) {
+//			consignor.setPhoneNumber(phoneNumber.trim());
+//		}
+//		if (!company.isBlank()) {
+//			consignor.setCompany(company.trim());
+//		}
+//
+//		try {
+//			return consignorService.save(consignor).get();
+//		} catch (InterruptedException | ExecutionException exception) {
+//			throw new RuntimeException(
+//				String.format(
+//					"編輯貨主「%d」時拋出線程中斷異常：%s❗",
+//					id,
+//					exception.getLocalizedMessage()
+//				),
+//				exception
+//			);
+//		}
+//	}
 }
