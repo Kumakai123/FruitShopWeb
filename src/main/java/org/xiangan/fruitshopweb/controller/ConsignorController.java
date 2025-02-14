@@ -4,9 +4,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.ExampleObject;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
@@ -33,8 +30,12 @@ public class ConsignorController {
 	/**
 	 * (服務層) 貨主
 	 */
+	private final ConsignorService consignorService;
+
 	@Autowired
-	private ConsignorService consignorService;
+	public ConsignorController(ConsignorService consignorService) {
+		this.consignorService = consignorService;
+	}
 
 	/**
 	 * 瀏覽
@@ -45,17 +46,6 @@ public class ConsignorController {
 	@Operation(
 		summary = "瀏覽所有的貨主名單"
 		,description = "瀏覽可分頁的所有貨主名單"
-		,requestBody =
-			@RequestBody(
-				description = "分頁參數"
-				,required = true
-				,content = @Content(
-					mediaType = "application/json"
-					,examples =@ExampleObject(
-						summary = "分頁參數範例"
-						,value = "{\"p\": 1, \"s\": 10}"
-			)
-			))
 		,responses = {
 			@ApiResponse(responseCode = "200", description = "Success")
 			,@ApiResponse(responseCode = "400", description = "參數有誤", content = @Content)
@@ -92,26 +82,19 @@ public class ConsignorController {
 		summary = "讀取一筆貨主資料"
 		,description = "輸入貨主ID讀取資料"
 		,parameters = {
-			@Parameter(name = "id",description = "貨主主鍵",in = ParameterIn.QUERY,example = "UUID(十碼)") }
+			@Parameter(name = "id",description = "貨主主鍵 UUID(十碼)") }
 		,responses = {
 			@ApiResponse(responseCode = "200", description = "Success", useReturnTypeSchema = true)
 			,@ApiResponse(responseCode = "400", description = "參數有誤", content = @Content)
 			,@ApiResponse(responseCode = "500", description = "伺服器請求失敗", content = @Content)
 	})
-	@GetMapping("/{id:^\\d+$}")
+	@GetMapping("/{id:[A-Za-z0-9]{10}}")
 	Consignor read(@PathVariable final String id) {
 		try {
-			return consignorService
-				       .load(id)
-				       .get();
+			return consignorService.load(id).get();
 		} catch (InterruptedException | ExecutionException exception) {
-			throw new CustomException(
-				String.format(
-					"讀取貨主「%d」時拋出線程中斷異常：%s❗",
-					id,
-					exception.getLocalizedMessage()
-				)
-			);
+			throw new RuntimeException(
+				String.format("讀取貨主「%s」時拋出線程中斷異常：%s❗", id, exception.getLocalizedMessage()));
 		}
 	}
 
@@ -174,63 +157,25 @@ public class ConsignorController {
 		summary = "編輯貨主"
 		,description = "輸入主鍵，編輯該筆貨主。若不輸入參數，則不會更動該欄位資料。"
 		,parameters = {
-			@Parameter(name = "id",description = "貨主主鍵",in = ParameterIn.QUERY,example = "UUID(十碼)")
-			,@Parameter(name = "nickName",description = "暱稱/稱呼",in = ParameterIn.QUERY,example = "陳大哥")
+			@Parameter(name = "nickName",description = "暱稱/稱呼",in = ParameterIn.QUERY,example = "陳大哥")
 			,@Parameter(name = "name",description = "名字",in = ParameterIn.QUERY,example = "陳浩銘")
 			,@Parameter(name = "phoneNumber",description = "連絡電話",in = ParameterIn.QUERY,example = "0912345678")
-			,@Parameter(name = "company",description = "公司行號/統編",in = ParameterIn.QUERY,example = "test123") }
+			,@Parameter(name = "company",description = "公司行號/統編",in = ParameterIn.QUERY,example = "test123")
+			,@Parameter(name = "id",description = "貨主主鍵 UUID(十碼)")}
 		,responses = {
 			@ApiResponse(responseCode = "200", description = "Success", useReturnTypeSchema = true)
 			,@ApiResponse(responseCode = "400", description = "參數有誤", content = @Content)
 			,@ApiResponse(responseCode = "500", description = "伺服器請求失敗", content = @Content)
 	})
-	@PostMapping("/{id:^\\s+$}")
+	@PostMapping("/{id:[A-Za-z0-9]{10}}")
 	Consignor update(
-		@PathVariable final String id,
-		@RequestParam(required = false) final String nickName,
-		@RequestParam(required = false) final String name,
-		@RequestParam(required = false) final String phoneNumber,
-		@RequestParam(required = false) final String company
+		 @PathVariable final String id
+		,@RequestParam(required = false) final String nickName
+		,@RequestParam(required = false) final String name
+		,@RequestParam(required = false) final String phoneNumber
+		,@RequestParam(required = false) final String company
 	) {
-		Consignor consignor;
-		try {
-			consignor = consignorService.load(id).get();
-		} catch (InterruptedException | ExecutionException exception) {
-			throw new RuntimeException(
-				String.format(
-					"讀取貨主「%d」時拋出線程中斷異常：%s❗",
-					id,
-					exception.getLocalizedMessage()
-				),
-				exception
-			);
-		}
-
-		if (!nickName.isBlank()) {
-			consignor.setNickName(nickName.trim());
-		}
-		if (!name.isBlank()) {
-			consignor.setName(name.trim());
-		}
-		if (!phoneNumber.isBlank()) {
-			consignor.setPhoneNumber(phoneNumber.trim());
-		}
-		if (!company.isBlank()) {
-			consignor.setCompany(company.trim());
-		}
-
-		try {
-			return consignorService.save(consignor).get();
-		} catch (InterruptedException | ExecutionException exception) {
-			throw new RuntimeException(
-				String.format(
-					"編輯貨主「%d」時拋出線程中斷異常：%s❗",
-					id,
-					exception.getLocalizedMessage()
-				),
-				exception
-			);
-		}
+		return consignorService.update(id, nickName, name, phoneNumber, company);
 	}
 
 	/**
@@ -242,39 +187,27 @@ public class ConsignorController {
 	@Operation(
 		summary = "刪除貨主"
 		,parameters = {
-			@Parameter(name = "id",description = "貨主主鍵",in = ParameterIn.QUERY,example = "UUID(十碼)") }
+			@Parameter(name = "id",description = "貨主主鍵 UUID(十碼)") }
 		,responses = {
 			@ApiResponse(responseCode = "200", description = "Success", useReturnTypeSchema = true)
 			,@ApiResponse(responseCode = "400", description = "參數有誤", content = @Content)
 			,@ApiResponse(responseCode = "500", description = "伺服器請求失敗", content = @Content)
 	})
-	@DeleteMapping("/{id:^\\d+$}")
+	@DeleteMapping("/{id:[A-Za-z0-9]{10}}")
 	Boolean delete(@PathVariable final String id) {
 		Consignor consignor;
 		try {
 			consignor = consignorService.load(id).get();
 		} catch (InterruptedException | ExecutionException exception) {
-			throw new RuntimeException(
-				String.format(
-					"讀取貨主「%d」時拋出線程中斷異常：%s❗",
-					id,
-					exception.getLocalizedMessage()
-				),
-				exception
-			);
+			throw new CustomException(
+				String.format("讀取貨主「%s」時拋出線程中斷異常：%s❗", id, exception.getLocalizedMessage()));
 		}
 
 		try {
 			return consignorService.delete(consignor).get();
 		} catch (InterruptedException | ExecutionException exception) {
-			throw new RuntimeException(
-				String.format(
-					"刪除貨主「%d」時拋出線程中斷異常：%s❗️",
-					id,
-					exception.getLocalizedMessage()
-				),
-				exception
-			);
+			throw new CustomException(
+				String.format("刪除貨主「%s」時拋出線程中斷異常：%s❗️", id, exception.getLocalizedMessage()));
 		}
 	}
 }
