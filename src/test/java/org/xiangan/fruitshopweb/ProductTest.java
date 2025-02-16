@@ -31,11 +31,9 @@ public class ProductTest {
         product.setUnitPrice(BigDecimal.valueOf(100));
 
         Consignor consignor = null;
+        String id = "lpBAxoTiR8";
         try {
-            consignor = consignorService.load(1).get();
-            if (consignor == null) {
-                throw new IllegalStateException("Consignor not found for ID: 1");
-            }
+            consignor = consignorService.load(id).get();
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             throw new RuntimeException("Thread interrupted during Consignor load", e);

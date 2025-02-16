@@ -14,15 +14,19 @@ public class OpenAPIConfig {
         return new OpenAPI()
             .info(
                 new Info()
-                    .title("XiangAnFruit Api")
-                    .version("1.0")
-                    .description("api Demo 順序為: Consignor -> Product -> Purchase -> Wastage\n" +
-                                 "                Revenue、Miscellaneous")
-                    .contact(
-                        new Contact()
-                            .name("kyle")
-                            .email("kyle2542736@gmail.com")
-                    )
+                        .title("XiangAnFruit Api")
+                        .version("1.0")
+                        .description("""
+                            <pre>
+                            api Demo 順序為: Consignor -> Product -> Purchase -> Wastage
+                                            Revenue、Miscellaneous
+                            </pre>
+                            """)
+                        .contact(
+                            new Contact()
+                                .name("kyle")
+                                .email("kyle2542736@gmail.com")
+                        )
             );
     }
 }
