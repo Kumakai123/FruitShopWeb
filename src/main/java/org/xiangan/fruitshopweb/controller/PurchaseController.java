@@ -95,7 +95,10 @@ public class PurchaseController {
 	})
 	@PostMapping
 	Purchase create(
-		@RequestParam @NotNull(message = "產品不可為空❗") @Pattern(regexp = "^[A-Za-z0-9]{10}$", message = "產品ID必須為10位英數字❗") final String productId
+		@RequestParam @NotNull(message = "產品不可為空❗")
+		@Pattern(
+				regexp = "^[A-Za-z0-9]{10}$"
+				, message = "產品ID必須為 UUID(十碼)❗") final String productId
 		,@RequestParam @NotNull(message = "進貨數量不可為空❗") final Double quantity
 		,@RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") final Date receivingDate
 	) {
@@ -124,7 +127,8 @@ public class PurchaseController {
 			return purchaseService.delete(id).get();
 		} catch (InterruptedException | ExecutionException exception) {
 			throw new CustomException(
-				String.format("刪除進貨單「%s」時拋出線程中斷異常：%s❗️", id, exception.getLocalizedMessage()));
+				String.format(
+						"刪除進貨單「%s」時拋出線程中斷異常：%s❗️", id, exception.getLocalizedMessage()));
 		}
 	}
 	
@@ -150,7 +154,8 @@ public class PurchaseController {
 			return purchaseService.load(id).get();
 		} catch (InterruptedException | ExecutionException exception) {
 			throw new CustomException(
-				String.format("讀取進貨單「%s」時拋出線程中斷異常：%s❗", id, exception.getLocalizedMessage()));
+				String.format(
+						"讀取進貨單「%s」時拋出線程中斷異常：%s❗", id, exception.getLocalizedMessage()));
 		}
 	}
 	
@@ -179,7 +184,9 @@ public class PurchaseController {
 	@PostMapping("/{id:[A-Za-z0-9]{10}}")
 	Purchase update(
 		@PathVariable final String id,
-		@RequestParam final String productId,
+		@RequestParam @Pattern(
+				regexp = "^[A-Za-z0-9]{10}$"
+				, message = "產品ID必須為 UUID(十碼)❗") final String productId,
 		@RequestParam(required = false) final Double quantity,
 		@RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") final Date receivingDate
 	) {

@@ -45,15 +45,15 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * 處理重複鍵異常 (DuplicateKeyException)
-     * 常見於插入資料庫時違反唯一約束 (Unique Constraint)
+     * 處理資源未找到異常 (NoResourceFoundException)。
+     * 通常發生於請求的資源不存在或路由錯誤。
      *
-     * @param exception DuplicateKeyException 異常對象
+     * @param exception NoResourceFoundException 異常對象
      * @param request   異常請求物件
      * @return          包含錯誤訊息的 ResponseEntity
      */
     @ExceptionHandler({NoResourceFoundException.class})
-    public ResponseEntity<ErrorResponse> handleDuplicateKeyException(
+    public ResponseEntity<ErrorResponse> handleNoResourceFoundException(
             NoResourceFoundException exception, WebRequest request){
         return buildErrorResponse(
                 HttpStatus.BAD_REQUEST

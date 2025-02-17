@@ -68,10 +68,11 @@ public class Wastage {
 		nullable = false
 	)
 	@NotNull
-	@Temporal(TemporalType.TIMESTAMP)
+	@Temporal(TemporalType.DATE)
 	@JsonFormat(
-		pattern = "yyyy-MM-dd'T'HH:mm:ssX",
-		timezone = "Asia/Taipei"
+			shape = JsonFormat.Shape.STRING,
+			pattern = "yyyy-MM-dd",
+			timezone = "Asia/Taipei"
 	)
 	private Date date;
 

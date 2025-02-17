@@ -57,6 +57,7 @@ public class Purchase {
 		name = "quantity",
 		nullable = false
 	)
+	@NotNull
 	private Double quantity;
 	
 	/**

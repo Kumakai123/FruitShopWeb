@@ -48,6 +48,45 @@ public class PurchaseService {
 	}
 
 	/**
+	 * 建立
+	 * @param productId 產品主鍵
+	 * @param quantity 進貨數量
+	 * @param receivingDate 進貨日期
+	 * @return 進貨單
+	 */
+	@Transactional
+	public Purchase create(
+			final String productId
+			,final Double quantity
+			,final Date receivingDate){
+		Purchase purchase = new Purchase();
+
+		Product product;
+		try {
+			product = productService.load(productId).get();
+		} catch (InterruptedException | ExecutionException exception) {
+			throw new CustomException(
+					String.format("讀取產品「%s」時拋出線程中斷異常：%s❗", productId, exception.getLocalizedMessage()));
+		}
+		purchase.setProduct(product);
+
+		purchase.setQuantity(quantity);
+
+		// 庫存數量+進貨數量
+		double inventory = product.getInventory();
+		product.setInventory(inventory+quantity);
+
+		purchase.setReceivingDate(receivingDate);
+
+		try {
+			return this.save(purchase).get();
+		} catch (InterruptedException | ExecutionException exception) {
+			throw new CustomException(
+					String.format("建立進貨單時拋出線程中斷異常：%s❗", exception.getLocalizedMessage()));
+		}
+	}
+
+	/**
 	 * @param id 主鍵
 	 * @return 是否成功刪除
 	 */
@@ -142,45 +181,6 @@ public class PurchaseService {
 				),
 				exception
 			);
-		}
-	}
-
-	/**
-	 * 建立
-	 * @param productId 產品主鍵
-	 * @param quantity 進貨數量
-	 * @param receivingDate 進貨日期
-	 * @return 進貨單
-	 */
-	@Transactional
-	public Purchase create(
-		final String productId
-		,final Double quantity
-		,final Date receivingDate){
-		Purchase purchase = new Purchase();
-
-		Product product;
-		try {
-			product = productService.load(productId).get();
-		} catch (InterruptedException | ExecutionException exception) {
-			throw new CustomException(
-				String.format("讀取產品「%s」時拋出線程中斷異常：%s❗", productId, exception.getLocalizedMessage()));
-		}
-		purchase.setProduct(product);
-
-		purchase.setQuantity(quantity);
-
-		// 庫存數量+進貨數量
-		double inventory = product.getInventory();
-		product.setInventory(inventory+quantity);
-
-		purchase.setReceivingDate(receivingDate);
-
-		try {
-			return this.save(purchase).get();
-		} catch (InterruptedException | ExecutionException exception) {
-			throw new CustomException(
-				String.format("建立進貨單時拋出線程中斷異常：%s❗", exception.getLocalizedMessage()));
 		}
 	}
 
