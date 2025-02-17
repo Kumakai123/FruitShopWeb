@@ -32,6 +32,10 @@ public class ConsignorController {
 	 */
 	private final ConsignorService consignorService;
 
+	/**
+	 * 依賴注入
+	 * @param consignorService the consignorService
+	 */
 	@Autowired
 	public ConsignorController(ConsignorService consignorService) {
 		this.consignorService = consignorService;
@@ -62,13 +66,8 @@ public class ConsignorController {
 				       )
 				       .get();
 		} catch (InterruptedException | ExecutionException exception) {
-			throw new RuntimeException(
-				String.format(
-					"瀏覽貨主時拋出線程中斷異常：%s❗",
-					exception.getLocalizedMessage()
-				),
-				exception
-			);
+			throw new CustomException(
+				String.format("瀏覽貨主時拋出線程中斷異常：%s❗", exception.getLocalizedMessage()));
 		}
 	}
 
@@ -93,7 +92,7 @@ public class ConsignorController {
 		try {
 			return consignorService.load(id).get();
 		} catch (InterruptedException | ExecutionException exception) {
-			throw new RuntimeException(
+			throw new CustomException(
 				String.format("讀取貨主「%s」時拋出線程中斷異常：%s❗", id, exception.getLocalizedMessage()));
 		}
 	}

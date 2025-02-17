@@ -68,7 +68,7 @@ public class WastageController {
 	 */
 	@PostMapping
 	Wastage create(
-		@RequestParam("product") @NotNull(message = "產品不可為空❗") final Long productId,
+		@RequestParam("product") @NotNull(message = "產品不可為空❗") final String productId,
 		@RequestParam final Double quantity,
 		@RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ssX") final Date date
 	) {
@@ -80,7 +80,7 @@ public class WastageController {
 		} catch (InterruptedException | ExecutionException exception) {
 			throw new RuntimeException(
 				String.format(
-					"讀取產品「%d」時拋出線程中斷異常：%s❗",
+					"讀取產品「%s」時拋出線程中斷異常：%s❗",
 					productId,
 					exception.getLocalizedMessage()
 				),
@@ -185,7 +185,7 @@ public class WastageController {
 	@PostMapping("/{id:^\\d+$}")
 	Wastage update(
 		@PathVariable final long id,
-		@RequestParam("product") final Long productId,
+		@RequestParam("product") final String productId,
 		@RequestParam(required = false) final Double quantity,
 		@RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ssX") final Date date
 	) {
