@@ -10,6 +10,7 @@ import org.hibernate.annotations.UuidGenerator;
 
 import java.util.Objects;
 import java.util.UUID;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * 貨主
@@ -76,12 +77,11 @@ public class Consignor {
 	@PrePersist
 	protected void genPrimaryKey() {
 		if (id == null) {
-			id = NanoIdUtils
-				.randomNanoId(
-					NanoIdUtils.DEFAULT_NUMBER_GENERATOR,
-					NanoIdUtils.DEFAULT_ALPHABET,
-					10)
-				.replace("-", "");
+			id = NanoIdUtils.randomNanoId(
+				ThreadLocalRandom.current(),
+				"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789".toCharArray(),
+				10
+			);
 		}
 	}
 

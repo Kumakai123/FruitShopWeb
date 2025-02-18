@@ -106,8 +106,6 @@ public class WastageService {
 							"讀取損耗表「%s」時拋出線程中斷異常：%s❗", id, exception.getLocalizedMessage()));
 		}
 
-		log.debug("執行到一一零行");
-
 		String productID = wastage.getProduct().getId();
 		Product product;
 		try {
@@ -118,20 +116,12 @@ public class WastageService {
 							"讀取產品「%s」時拋出線程中斷異常：%s❗", productID, exception.getLocalizedMessage()));
 		}
 
-		log.debug("執行到一二二行");
-
 		Double quantity = wastage.getQuantity();
 		double inventory = product.getInventory();
 
-		log.debug("執行到一二七行");
-
 		product.setInventory(inventory+quantity);
 
-		log.debug("執行到一三一行");
-
 		wastageRepository.delete(wastage);
-
-		log.debug("執行到一三五行");
 
 		return CompletableFuture.completedFuture(true);
 	}

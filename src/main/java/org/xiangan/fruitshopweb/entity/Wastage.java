@@ -11,6 +11,7 @@ import lombok.Data;
 
 import java.util.Date;
 import java.util.Objects;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * 損耗表
@@ -79,12 +80,11 @@ public class Wastage {
 	@PrePersist
 	protected void genPrimaryKey() {
 		if (id == null) {
-			id = NanoIdUtils
-				.randomNanoId(
-					NanoIdUtils.DEFAULT_NUMBER_GENERATOR,
-					NanoIdUtils.DEFAULT_ALPHABET,
-					10)
-				.replace("-", "");
+			id = NanoIdUtils.randomNanoId(
+				ThreadLocalRandom.current(),
+				"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789".toCharArray(),
+				10
+			);
 		}
 	}
 

@@ -11,6 +11,7 @@ import org.xiangan.fruitshopweb.enumType.UnitTypeEnumConverter;
 
 import java.math.BigDecimal;
 import java.util.Objects;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * 產品
@@ -98,12 +99,11 @@ public class Product {
 	@PrePersist
 	protected void genPrimaryKey() {
 		if (id == null) {
-			id = NanoIdUtils
-				.randomNanoId(
-					NanoIdUtils.DEFAULT_NUMBER_GENERATOR,
-					NanoIdUtils.DEFAULT_ALPHABET,
-					10)
-				.replace("-", "");
+			id = NanoIdUtils.randomNanoId(
+				ThreadLocalRandom.current(),
+				"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789".toCharArray(),
+				10
+			);
 		}
 	}
 

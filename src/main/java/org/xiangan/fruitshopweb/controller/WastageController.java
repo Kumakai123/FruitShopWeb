@@ -26,7 +26,7 @@ import java.util.concurrent.ExecutionException;
  * 損耗單
  */
 @RestController
-@RequestMapping("/wastage")
+@RequestMapping("/api/wastage")
 @Slf4j
 @Tag(name = "損耗單 api")
 public class WastageController {
@@ -52,8 +52,7 @@ public class WastageController {
 	 * @return 可分頁的損耗單
 	 */
 	@Operation(
-			summary = "瀏覽所有的損耗單名單"
-			,description = "瀏覽可分頁的所有損耗單"
+			summary = "瀏覽可分頁的所有損耗單"
 			,responses = {
 			@ApiResponse(responseCode = "200", description = "Success")
 			,@ApiResponse(responseCode = "400", description = "參數有誤", content = @Content)
@@ -127,8 +126,6 @@ public class WastageController {
 	@DeleteMapping("/{id:[A-Za-z0-9]{10}}")
 	Boolean delete(@PathVariable final String id) {
 		try {
-			log.debug("執行到一三一行");
-
 			return wastageService.delete(id).get();
 		} catch (InterruptedException | ExecutionException exception) {
 			throw new CustomException(

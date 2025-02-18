@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.sql.Date;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * 雜物
@@ -57,12 +58,11 @@ public class Miscellaneous {
     @PrePersist
     protected void genPrimaryKey() {
         if (id == null) {
-            id = NanoIdUtils
-                .randomNanoId(
-                    NanoIdUtils.DEFAULT_NUMBER_GENERATOR,
-                    NanoIdUtils.DEFAULT_ALPHABET,
-                    10)
-                .replace("-", "");
+            id = NanoIdUtils.randomNanoId(
+                ThreadLocalRandom.current(),
+                "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789".toCharArray(),
+                10
+            );
         }
     }
 

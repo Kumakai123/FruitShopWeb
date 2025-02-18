@@ -65,7 +65,6 @@ public class PurchaseController {
 		try {
 			return purchaseService
 				       .load(
-
 					       p < 1 ? 0 : p - 1,
 					       paginationRequest.getS()
 				       )

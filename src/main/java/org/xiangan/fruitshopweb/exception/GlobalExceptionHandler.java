@@ -38,7 +38,7 @@ public class GlobalExceptionHandler {
         CustomException exception, WebRequest request) {
         return buildErrorResponse(
             HttpStatus.NOT_FOUND,
-            "Resource Not Found",
+            "無法找到資源或 API，請檢查 URL 是否正確。",
             exception.getMessage(),
             request,
             exception);

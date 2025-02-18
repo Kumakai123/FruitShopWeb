@@ -12,6 +12,7 @@ import lombok.Data;
 import java.util.Date;
 import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * 進貨
@@ -91,12 +92,11 @@ public class Purchase {
 	@PrePersist
 	protected void genPrimaryKey() {
 		if (id == null) {
-			id = NanoIdUtils
-				.randomNanoId(
-					NanoIdUtils.DEFAULT_NUMBER_GENERATOR,
-					NanoIdUtils.DEFAULT_ALPHABET,
-					10)
-				.replace("-", "");
+			id = NanoIdUtils.randomNanoId(
+				ThreadLocalRandom.current(),
+				"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789".toCharArray(),
+				10
+			);
 		}
 	}
 

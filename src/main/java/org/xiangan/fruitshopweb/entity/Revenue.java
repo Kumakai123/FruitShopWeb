@@ -9,6 +9,7 @@ import lombok.Data;
 import java.math.BigDecimal;
 import java.sql.Date;
 import java.util.Objects;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * 營運狀況
@@ -111,12 +112,11 @@ public class Revenue {
 	@PrePersist
 	protected void genPrimaryKey() {
 		if (id == null) {
-			id = NanoIdUtils
-				.randomNanoId(
-					NanoIdUtils.DEFAULT_NUMBER_GENERATOR,
-					NanoIdUtils.DEFAULT_ALPHABET,
-					10)
-				.replace("-", "");
+			id = NanoIdUtils.randomNanoId(
+				ThreadLocalRandom.current(),
+				"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789".toCharArray(),
+				10
+			);
 		}
 	}
 

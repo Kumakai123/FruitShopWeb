@@ -1,10 +1,18 @@
 package org.xiangan.fruitshopweb.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.xiangan.fruitshopweb.entity.Revenue;
+import org.xiangan.fruitshopweb.exception.CustomException;
 import org.xiangan.fruitshopweb.model.PaginationRequest;
 import org.xiangan.fruitshopweb.service.RevenueService;
 
@@ -13,10 +21,12 @@ import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 
 /**
- * 營業狀況
+ * 營收狀況
  */
 @RestController
 @RequestMapping("/revenue")
+@Slf4j
+@Tag(name = "營業狀況 api")
 public class RevenueController {
 	
 	/**
@@ -29,8 +39,15 @@ public class RevenueController {
 	 * 瀏覽
 	 *
 	 * @param paginationRequest 分頁請求
-	 * @return 可分頁的營業狀況
+	 * @return 可分頁的營收狀況
 	 */
+	@Operation(
+		summary = "瀏覽可分頁的所有營收狀況"
+		,responses = {
+		@ApiResponse(responseCode = "200", description = "Success")
+		,@ApiResponse(responseCode = "400", description = "參數有誤", content = @Content)
+		,@ApiResponse(responseCode = "500", description = "伺服器請求失敗", content = @Content)
+	})
 	@GetMapping
 	Page<Revenue> browse(@Validated final PaginationRequest paginationRequest) {
 		final int p = paginationRequest.getP();
@@ -43,13 +60,9 @@ public class RevenueController {
 				       )
 				       .get();
 		} catch (InterruptedException | ExecutionException exception) {
-			throw new RuntimeException(
+			throw new CustomException(
 				String.format(
-					"瀏覽營業狀況時拋出線程中斷異常：%s❗",
-					exception.getLocalizedMessage()
-				),
-				exception
-			);
+					"瀏覽營業狀況時拋出線程中斷異常：%s❗", exception.getLocalizedMessage()));
 		}
 	}
 	
@@ -64,14 +77,28 @@ public class RevenueController {
 	 * @param wastage              損耗
 	 * @return 營收狀況
 	 */
+	@Operation(
+		summary = "建立營收狀況"
+		,parameters = {
+		@Parameter(name = "grossIncome",description = "總收入",in = ParameterIn.QUERY,example = "10000")
+		,@Parameter(name = "netIncome",description = "淨收入",in = ParameterIn.QUERY,example = "5000")
+		,@Parameter(name = "purchasesExpense",description = "進貨成本",in = ParameterIn.QUERY,example = "1000")
+		,@Parameter(name = "personnelExpenses",description = "人事成本",in = ParameterIn.QUERY,example = "1500")
+		,@Parameter(name = "miscellaneousExpense",description = "雜物成本",in = ParameterIn.QUERY,example = "1500")
+		,@Parameter(name = "wastage",description = "損耗",in = ParameterIn.QUERY,example = "100")}
+		,responses = {
+		@ApiResponse(responseCode = "200", description = "Success", useReturnTypeSchema = true)
+		,@ApiResponse(responseCode = "400", description = "參數有誤", content = @Content)
+		,@ApiResponse(responseCode = "500", description = "伺服器請求失敗", content = @Content)
+	})
 	@PostMapping
 	Revenue create(
-		@RequestParam(required = false) BigDecimal grossIncome,
-		@RequestParam(required = false) BigDecimal netIncome,
-		@RequestParam(required = false) BigDecimal purchasesExpense,
-		@RequestParam(required = false) BigDecimal personnelExpenses,
-		@RequestParam(required = false) BigDecimal miscellaneousExpense,
-		@RequestParam(required = false) BigDecimal wastage
+		@RequestParam BigDecimal grossIncome,
+		@RequestParam BigDecimal netIncome,
+		@RequestParam BigDecimal purchasesExpense,
+		@RequestParam BigDecimal personnelExpenses,
+		@RequestParam BigDecimal miscellaneousExpense,
+		@RequestParam BigDecimal wastage
 	) {
 		Revenue revenue = new Revenue();
 		
@@ -114,13 +141,9 @@ public class RevenueController {
 		try {
 			return revenueService.save(revenue).get();
 		} catch (InterruptedException | ExecutionException exception) {
-			throw new RuntimeException(
+			throw new CustomException(
 				String.format(
-					"建立營收狀況時拋出線程中斷異常：%s❗",
-					exception.getLocalizedMessage()
-				),
-				exception
-			);
+					"建立營收狀況時拋出線程中斷異常：%s❗", exception.getLocalizedMessage()));
 		}
 	}
 	
@@ -131,32 +154,22 @@ public class RevenueController {
 	 * @return 是否刪除
 	 */
 	@DeleteMapping("/{id:^\\d+$}")
-	Boolean delete(@PathVariable final long id) {
+	Boolean delete(@PathVariable final String id) {
 		Revenue revenue;
 		try {
 			revenue = revenueService.load(id).get();
 		} catch (InterruptedException | ExecutionException exception) {
-			throw new RuntimeException(
+			throw new CustomException(
 				String.format(
-					"讀取營收狀況「%d」時拋出線程中斷異常：%s❗",
-					id,
-					exception.getLocalizedMessage()
-				),
-				exception
-			);
+					"讀取營收狀況「%s」時拋出線程中斷異常：%s❗", id, exception.getLocalizedMessage()));
 		}
 		
 		try {
 			return revenueService.delete(revenue).get();
 		} catch (InterruptedException | ExecutionException exception) {
-			throw new RuntimeException(
+			throw new CustomException(
 				String.format(
-					"刪除營收狀況「%d」時拋出線程中斷異常：%s❗️",
-					id,
-					exception.getLocalizedMessage()
-				),
-				exception
-			);
+					"刪除營收狀況「%s」時拋出線程中斷異常：%s❗️", id, exception.getLocalizedMessage()));
 		}
 	}
 	
@@ -167,18 +180,13 @@ public class RevenueController {
 	 * @return 營收狀況
 	 */
 	@GetMapping("/{id:^\\d+$}")
-	Revenue read(@PathVariable final long id) {
+	Revenue read(@PathVariable final String id) {
 		try {
 			return revenueService.load(id).get();
 		} catch (InterruptedException | ExecutionException exception) {
-			throw new RuntimeException(
+			throw new CustomException(
 				String.format(
-					"讀取營收狀況「%d」時拋出線程中斷異常：%s❗",
-					id,
-					exception.getLocalizedMessage()
-				),
-				exception
-			);
+					"讀取營收狀況「%s」時拋出線程中斷異常：%s❗", id, exception.getLocalizedMessage()));
 		}
 	}
 	
@@ -196,7 +204,7 @@ public class RevenueController {
 	 */
 	@PostMapping("/{id:^\\d+$}")
 	Revenue update(
-		@PathVariable Long id,
+		@PathVariable String id,
 		@RequestParam(required = false) BigDecimal grossIncome,
 		@RequestParam(required = false) BigDecimal netIncome,
 		@RequestParam(required = false) BigDecimal purchasesExpense,
@@ -208,14 +216,9 @@ public class RevenueController {
 		try {
 			revenue = revenueService.load(id).get();
 		} catch (InterruptedException | ExecutionException exception) {
-			throw new RuntimeException(
+			throw new CustomException(
 				String.format(
-					"讀取營收狀況「%d」時拋出線程中斷異常：%s❗",
-					id,
-					exception.getLocalizedMessage()
-				),
-				exception
-			);
+					"讀取營收狀況「%s」時拋出線程中斷異常：%s❗", id, exception.getLocalizedMessage()));
 		}
 		
 		// 總收入
@@ -250,14 +253,9 @@ public class RevenueController {
 		try {
 			return revenueService.save(revenue).get();
 		} catch (InterruptedException | ExecutionException exception) {
-			throw new RuntimeException(
+			throw new CustomException(
 				String.format(
-					"編輯營收狀況「%d」時拋出線程中斷異常：%s❗",
-					id,
-					exception.getLocalizedMessage()
-				),
-				exception
-			);
+					"編輯營收狀況「%s」時拋出線程中斷異常：%s❗", id, exception.getLocalizedMessage()));
 		}
 	}
 }
