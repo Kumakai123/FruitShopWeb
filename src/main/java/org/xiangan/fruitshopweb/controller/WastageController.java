@@ -26,7 +26,7 @@ import java.util.concurrent.ExecutionException;
  * 損耗單
  */
 @RestController
-@RequestMapping("/api/wastage")
+@RequestMapping("/wastage")
 @Slf4j
 @Tag(name = "損耗單 api")
 public class WastageController {

@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.method.annotation.HandlerMethodValidationException;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import java.util.NoSuchElementException;
@@ -158,6 +159,26 @@ public class GlobalExceptionHandler {
         return buildErrorResponse(
                 HttpStatus.BAD_REQUEST
                 ,"未預期的伺服器錯誤"
+                ,exception.getMessage()
+                ,request
+                ,exception
+        );
+    }
+
+    /**
+     * 處理執行期異常 (HandlerMethodValidationException)
+     * 常見於參數輸入錯誤例外
+     *
+     * @param exception HandlerMethodValidationException 異常對象
+     * @param request   異常請求物件
+     * @return          包含錯誤訊息的 ResponseEntity
+     */
+    @ExceptionHandler({HandlerMethodValidationException.class})
+    public ResponseEntity<ErrorResponse> handleHandlerMethodValidationException(
+            HandlerMethodValidationException exception, WebRequest request){
+        return buildErrorResponse(
+                HttpStatus.BAD_REQUEST
+                ,"參數輸入有誤，請重新確認或參考規則"
                 ,exception.getMessage()
                 ,request
                 ,exception
