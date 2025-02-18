@@ -50,7 +50,7 @@ public class Revenue {
 	@Column(
 		name = "gross_income",
 		nullable = false,
-		precision = 2
+		scale = 2
 	)
 	private BigDecimal grossIncome;
 	
@@ -61,7 +61,7 @@ public class Revenue {
 	@Column(
 		name = "net_income",
 		nullable = false,
-		precision = 2
+		scale = 2
 	)
 	private BigDecimal netIncome;
 	
@@ -72,7 +72,7 @@ public class Revenue {
 	@Column(
 		name = "purchases_expense",
 		nullable = false,
-		precision = 2
+		scale = 2
 	)
 	private BigDecimal purchasesExpense;
 	
@@ -83,7 +83,7 @@ public class Revenue {
 	@Column(
 		name = "personnel_expenses",
 		nullable = false,
-		precision = 2
+		scale = 2
 	)
 	private BigDecimal personnelExpenses;
 	
@@ -94,7 +94,7 @@ public class Revenue {
 	@Column(
 		name = "miscellaneous_expense",
 		nullable = false,
-		precision = 2
+		scale = 2
 	)
 	private BigDecimal miscellaneousExpense;
 	
@@ -105,7 +105,7 @@ public class Revenue {
 	@Column(
 		name = "wastage",
 		nullable = false,
-		precision = 2
+		scale = 2
 	)
 	private BigDecimal wastage;
 
