@@ -13,19 +13,15 @@ Swagger Demo:http://localhost:8000/swagger-ui/index.html
 1. **RESTful API**
     - 隨著前後端分離開發成為趨勢，利用 Spring MVC 技術實現 RESTful API，以提升開發效率與系統維護性。
 2. **資料庫功能**
-    - 使用 **MySQL** 作為資料庫，並使用 **Criteria API** 作為查詢語言，實現包含分頁查詢在內的基本 CRUD 功能。
+    - 使用 **MySQL** 作為資料庫，並使用 **Criteria API** 進行條件查詢，實現包含分頁查詢在內的基本 CRUD 功能。
 3. **Docker 容器化**
     - 使用 **Docker** 部署應用，整合 MySQL 容器，實現快速部署和測試。
+4. **Swagger 套件**
+    - 整合 Swagger UI，直覺式 API 文件與即時測試，提升開發效率與前後端協作。
 
 ## **未來規劃**
 
-1. **Swagger 套件**
-    - **目的：**
-        - 提供 REST API 的可視化文件，方便開發者快速測試和理解 API。
-    - **計畫：**
-        - 引入 **Swagger UI**，生成自動化的 API 文檔。
-
-2. **Spring Security**
+1. **Spring Security**
     - **目的：**
         - 實現用戶認證和授權（Authentication & Authorization）。
         - 提升系統的數據安全性。
@@ -33,20 +29,20 @@ Swagger Demo:http://localhost:8000/swagger-ui/index.html
         - 支持用戶角色管理（如普通用戶和管理員）。
         - 整合 **JWT（JSON Web Token）** 或 **OAuth2** 用於 API 認證。
 
-3. **AOP**
+2. **AOP**
     - **目的：**
         - 簡化程式碼管理，統一處理日誌記錄、異常處理和性能監控。
     - **應用場景：**
         - 記錄所有 API 請求的日誌。
         - 捕獲全局異常，回傳清楚的錯誤資訊。
 
-4. **CORS（跨域）處理**
+3. **CORS（跨域）處理**
     - **目的：**
         - 支持跨來源請求，允許前端應用與後端服務交互。
     - **實作：**
         - 配置 **Spring** 的 CORS 規則，允許合法來源的請求。
 
-5. **單元測試**
+4. **單元測試**
     - **目的：**
         - 確保程式穩定，避免功能迭代導致的潛在問題。
     - **工具與框架：**
