@@ -38,7 +38,6 @@ public class RevenueController {
 
 	/**
 	 * 依賴注入
-	 *
 	 * @param revenueService the revenueService
 	 */
 	@Autowired

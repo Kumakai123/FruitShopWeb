@@ -164,7 +164,7 @@ public class WastageService {
 								criteriaBuilder.equal(root.get(Wastage_.id), id))
 				)
 				.orElseThrow(
-					() -> new NoSuchElementException(
+					() -> new CustomException(
 						String.format("無主鍵為「%s」的損耗單❗️", id))
 				)
 		);
@@ -237,7 +237,7 @@ public class WastageService {
 
 			wastage.setQuantity(quantity);
 			if (afterInventory < 0){
-				throw new IllegalArgumentException(
+				throw new CustomException(
 						String.format(
 								"產品「%s」 損耗數量異常，目前庫存數量為: %d %s"
 								, product.getProductName()

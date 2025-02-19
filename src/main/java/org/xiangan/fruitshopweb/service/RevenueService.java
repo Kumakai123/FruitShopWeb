@@ -108,11 +108,12 @@ public class RevenueService {
 	private void checkAmountLength(String fieldName, BigDecimal amount) {
 		String integerPart = amount.setScale(0, RoundingMode.DOWN).toPlainString();
 		if (integerPart.length() > 10) {
-			throw new IllegalArgumentException(
+			throw new CustomException(
 					String.format("%s 金額上限不可超過10位整數(目前長度:%d)",fieldName,integerPart.length())
 			);
 		}
 	}
+
 	/**
 	 * @param p 頁數
 	 * @param s 一頁幾筆
@@ -151,7 +152,7 @@ public class RevenueService {
 										criteriaBuilder.equal(root.get(Revenue_.id), id))
 						)
 						.orElseThrow(
-								() -> new NoSuchElementException(
+								() -> new CustomException(
 										String.format("無主鍵為「%s」的營業狀況❗️", id))
 						)
 		);
@@ -169,13 +170,9 @@ public class RevenueService {
 					revenueRepository.saveAndFlush(entity)
 			);
 		} catch (Exception exception) {
-			throw new RuntimeException(
+			throw new CustomException(
 					String.format(
-							"持久化營業狀況時拋出線程中斷異常：%s❗️",
-							exception.getLocalizedMessage()
-					),
-					exception
-			);
+							"持久化營業狀況時拋出線程中斷異常：%s❗️", exception.getLocalizedMessage()));
 		}
 	}
 

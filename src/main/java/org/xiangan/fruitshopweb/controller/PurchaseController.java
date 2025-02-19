@@ -19,6 +19,7 @@ import org.xiangan.fruitshopweb.exception.CustomException;
 import org.xiangan.fruitshopweb.model.PaginationRequest;
 import org.xiangan.fruitshopweb.service.PurchaseService;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.concurrent.ExecutionException;
 
@@ -99,7 +100,7 @@ public class PurchaseController {
 				regexp = "^[A-Za-z0-9]{10}$"
 				, message = "產品ID必須為 UUID(十碼)❗") final String productId
 		,@RequestParam @NotNull(message = "進貨數量不可為空❗") final Double quantity
-		,@RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") final Date receivingDate
+		,@RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm") final LocalDateTime receivingDate
 	) {
 			return purchaseService.create(productId,quantity,receivingDate);
 	}
@@ -187,7 +188,7 @@ public class PurchaseController {
 				regexp = "^[A-Za-z0-9]{10}$"
 				, message = "產品ID必須為 UUID(十碼)❗") final String productId,
 		@RequestParam(required = false) final Double quantity,
-		@RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") final Date receivingDate
+		@RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm") final LocalDateTime receivingDate
 	) {
 		return purchaseService.update(id, productId, quantity, receivingDate);
 	}

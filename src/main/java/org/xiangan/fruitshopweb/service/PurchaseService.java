@@ -13,6 +13,7 @@ import org.xiangan.fruitshopweb.entity.Purchase_;
 import org.xiangan.fruitshopweb.exception.CustomException;
 import org.xiangan.fruitshopweb.repository.PurchaseRepository;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.NoSuchElementException;
 import java.util.Objects;
@@ -58,7 +59,7 @@ public class PurchaseService {
 	public Purchase create(
 			final String productId
 			,final Double quantity
-			,final Date receivingDate){
+			,final LocalDateTime receivingDate){
 		Purchase purchase = new Purchase();
 
 		Product product;
@@ -197,7 +198,7 @@ public class PurchaseService {
 		final String id
 		,final String productId
 		,final Double quantity
-		,final Date receivingDate){
+		,final LocalDateTime receivingDate){
 		Purchase purchase;
 		try {
 			purchase = this.load(id).get();

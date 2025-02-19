@@ -9,9 +9,9 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.Objects;
-import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
@@ -68,10 +68,10 @@ public class Purchase {
 	@NotNull
 	@Temporal(TemporalType.TIMESTAMP)
 	@JsonFormat(
-		pattern = "yyyy-MM-dd'T'HH:mm:ssX",
+		pattern = "yyyy-MM-dd HH:mm",
 		timezone = "Asia/Taipei"
 	)
-	private Date orderDate;
+	private LocalDateTime orderDate;
 	
 	/**
 	 * 進貨日期
@@ -84,10 +84,10 @@ public class Purchase {
 	@NotNull
 	@Temporal(TemporalType.TIMESTAMP)
 	@JsonFormat(
-		pattern = "yyyy-MM-dd'T'HH:mm:ssX",
+		pattern = "yyyy-MM-dd HH:mm",
 		timezone = "Asia/Taipei"
 	)
-	private Date receivingDate;
+	private LocalDateTime receivingDate;
 
 	@PrePersist
 	protected void genPrimaryKey() {
@@ -104,9 +104,7 @@ public class Purchase {
 	 * 默認構造函式
 	 */
 	public Purchase() {
-		orderDate = new Date(
-			System.currentTimeMillis()
-		);
+		orderDate = LocalDateTime.now();
 	}
 	
 	@Override
