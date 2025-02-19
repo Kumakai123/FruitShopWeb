@@ -3,16 +3,21 @@ package org.xiangan.fruitshopweb.service;
 import jakarta.persistence.criteria.Predicate;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.xiangan.fruitshopweb.entity.Miscellaneous;
 import org.xiangan.fruitshopweb.entity.Miscellaneous_;
+import org.xiangan.fruitshopweb.exception.CustomException;
 import org.xiangan.fruitshopweb.repository.MiscellaneousRepository;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 /**
  * (服務層) 雜物
@@ -20,28 +25,110 @@ import java.util.concurrent.CompletableFuture;
 @Service
 @Slf4j
 public class MiscellaneousService {
-    @Autowired
-    private MiscellaneousRepository miscellaneousRepo;
 
+	/**
+	 * (數據存取對象)雜物
+	 */
+    private final MiscellaneousRepository miscellaneousRepo;
+
+	/**
+	 * 依賴注入
+	 * @param miscellaneousRepo the miscellaneousRepo
+	 */
+    @Autowired
+	public MiscellaneousService(MiscellaneousRepository miscellaneousRepo) {
+		this.miscellaneousRepo = miscellaneousRepo;
+	}
+
+	/**
+	 * @param entity 營業狀況
+	 * @return 是否成功刪除
+	 */
+	@Async
+	@Transactional
+	public CompletableFuture<Boolean> delete(final Miscellaneous entity) {
+		miscellaneousRepo.delete(entity);
+		return CompletableFuture.completedFuture(true);
+	}
+
+	/**
+     * 讀取
+     *
+     * @param id 主鍵
+     * @return 雜物
+     */
     @Async
-    public CompletableFuture<Miscellaneous> load(long id) {
+    public CompletableFuture<Miscellaneous> load(final String id) {
         return CompletableFuture.completedFuture(
             miscellaneousRepo
-                .findById(id)
+                .findOne(
+                    ((root, criteriaQuery, criteriaBuilder) ->
+                        criteriaBuilder.equal(root.get(Miscellaneous_.ID), id))
+                )
                 .orElseThrow(
-                    () -> new NoSuchElementException(
-                    String.format(
-                        "無主鍵為「%d」的雜物❗️",
-                        id
-                    )
-                )));
-
+                    () -> new CustomException(
+                    String.format("無主鍵為「%s」的雜物❗️", id)
+                ))
+        );
     }
 
     @Async
     public CompletableFuture<List<Miscellaneous>> load(){
         return CompletableFuture.completedFuture(
             miscellaneousRepo.findAll()
+        );
+    }
+
+	/**
+	 * 自訂區段查詢的雜物清單
+	 *
+	 * @param p 頁數
+	 * @param s 一頁幾筆
+	 * @param begin 起始時間
+	 * @param end 結束時間
+	 * @return 可分頁自訂區段查詢的雜物清單
+	 */
+    @Async
+    @Transactional(readOnly = true)
+    public CompletableFuture<Page<Miscellaneous>> load(
+        final int p
+        ,final int s
+        ,final Date begin
+        ,final Date end) {
+        return CompletableFuture.completedFuture(
+            miscellaneousRepo
+                .findAll(
+                    (root, criteriaQuery, criteriaBuilder) -> {
+                        Collection<Predicate> predicates = new ArrayList<>();
+
+                        if (Objects.nonNull(begin) && Objects.nonNull(end)){
+                            predicates.add(
+                                criteriaBuilder.between(
+									root.get(Miscellaneous_.recordDate),begin,end)
+                            );
+                        }else {
+							if (Objects.nonNull(begin)){
+								criteriaBuilder.greaterThanOrEqualTo(
+									root.get(Miscellaneous_.recordDate),begin
+								);
+							}
+	                        if (Objects.nonNull(end)){
+		                        criteriaBuilder.greaterThanOrEqualTo(
+			                        root.get(Miscellaneous_.recordDate),end
+		                        );
+	                        }
+                        }
+                        criteriaQuery.orderBy(
+                            criteriaBuilder.desc(root.get(Miscellaneous_.recordDate)),
+                            criteriaBuilder.asc(root.get(Miscellaneous_.amount)),
+                            criteriaBuilder.desc(root.get(Miscellaneous_.name))
+                        );
+	                    return criteriaBuilder.and(
+		                    predicates.toArray(new Predicate[0])
+	                    );
+                    },
+                    PageRequest.of(p, s)
+                )
         );
     }
 
@@ -92,31 +179,6 @@ public class MiscellaneousService {
         );
     }
 
-    /**
-     * 計算單日總花費金額
-     *
-     * @param begin 開始
-     * @param end 結束
-     * @return 總金額
-     */
-    public CompletableFuture<BigDecimal> dailyAmountSpend(Date begin, Date end){
-//       同步  其他
-//      return loadBetweenRecordDate(begin, end)
-//            .join()
-//            .stream()
-//            .map(Miscellaneous::getAmount)
-//            .filter( Objects::nonNull)
-//            .reduce(BigDecimal.ZERO,BigDecimal::add);
-
-        // 非同步
-        return loadBetweenRecordDate(begin, end)
-            .thenApply(list -> list.stream()
-                .map(Miscellaneous::getAmount)
-                .filter(Objects::nonNull)
-                .reduce(BigDecimal.ZERO, BigDecimal::add)
-            );
-    }
-
     @Async
     @Transactional
     public CompletableFuture<Miscellaneous> save(final Miscellaneous entity){
@@ -140,4 +202,52 @@ public class MiscellaneousService {
         }
     }
 
+	/**
+	 * 總計區間內的雜物金額
+	 * @param begin 起始時間
+	 * @param end   結束時間
+	 * @return      雜物總金額
+	 */
+	@Async
+	public CompletableFuture<BigDecimal> sumAmountBetweenRecordDate(final LocalDateTime begin,final LocalDateTime end) {
+		return CompletableFuture.supplyAsync(
+			() -> miscellaneousRepo.sumAmountBetweenDates(begin, end));
+	}
+
+	/**
+	 * 編輯
+	 *
+	 * @param id  主鍵
+	 * @param name  總收入
+	 * @param amount 淨收入
+	 * @return 雜物
+	 */
+	@Transactional
+	public Miscellaneous update(
+		final String id
+		, final String name
+		, final BigDecimal amount) {
+		Miscellaneous miscellaneous;
+		try {
+			miscellaneous = this.load(id).get();
+		} catch (InterruptedException | ExecutionException exception) {
+			throw new CustomException(String.format("讀取雜物「%s」時拋出線程中斷異常：%s❗", id,
+				exception.getLocalizedMessage()));
+		}
+
+		if (Objects.nonNull(name)){
+			miscellaneous.setName(name.trim());
+		}
+		if (Objects.nonNull(amount)){
+			miscellaneous.setAmount(amount);
+		}
+
+		try {
+			return this.save(miscellaneous).get();
+		} catch (InterruptedException | ExecutionException exception) {
+			throw new CustomException(
+				String.format("編輯雜物清單時拋出線程中斷異常：%s❗", exception.getLocalizedMessage())
+			);
+		}
+	}
 }

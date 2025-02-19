@@ -8,7 +8,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
-import java.sql.Date;
+import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
@@ -51,9 +52,9 @@ public class Miscellaneous {
      * 紀錄時間
      */
     @Column(name = "date")
-    @Temporal(TemporalType.DATE)
+    @Temporal(TemporalType.TIMESTAMP)
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm", timezone = "Asia/Taipei")
-    private Date recordDate;
+    private LocalDateTime recordDate;
 
     @PrePersist
     protected void genPrimaryKey() {
@@ -72,7 +73,7 @@ public class Miscellaneous {
     public Miscellaneous(String name,BigDecimal amount) {
         this.name = name;
         this.amount = amount;
-        this.recordDate = new Date(System.currentTimeMillis());
+        this.recordDate = LocalDateTime.now();
     }
 
     @Override
