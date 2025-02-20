@@ -38,7 +38,7 @@ class FruitShopWebApplicationTests {
 	@Test
 	void readDataTest() throws Exception {
 		// 查詢數據
-		Optional<Miscellaneous> result = Optional.ofNullable(miscellaneousService.load(1).get());
+		Optional<Miscellaneous> result = Optional.ofNullable(miscellaneousService.load("1").get());
 
 		// 打印結果
 		if (result.isPresent()) {

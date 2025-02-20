@@ -4,10 +4,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.xiangan.fruitshopweb.entity.Consignor;
+import org.xiangan.fruitshopweb.entity.Person;
 import org.xiangan.fruitshopweb.entity.Product;
 import org.xiangan.fruitshopweb.enumType.ProductTypeEnum;
-import org.xiangan.fruitshopweb.service.ConsignorService;
+import org.xiangan.fruitshopweb.service.PersonService;
 import org.xiangan.fruitshopweb.service.ProductService;
 
 import java.math.BigDecimal;
@@ -20,7 +20,7 @@ public class ProductTest {
     @Autowired
     private ProductService service;
     @Autowired
-    private ConsignorService consignorService;
+    private PersonService personService;
 
     @Test
     void create() {
@@ -30,10 +30,10 @@ public class ProductTest {
         product.setInventory(166);
         product.setUnitPrice(BigDecimal.valueOf(100));
 
-        Consignor consignor = null;
+        Person person = null;
         String id = "lpBAxoTiR8";
         try {
-            consignor = consignorService.load(id).get();
+            person = personService.load(id).get();
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             throw new RuntimeException("Thread interrupted during Consignor load", e);
@@ -41,7 +41,7 @@ public class ProductTest {
             throw new RuntimeException("Failed to load Consignor: " + e.getCause().getMessage(), e);
         }
 
-        product.setConsignor(consignor);
+        product.setPerson(person);
 
         Product saved = null;
         try {

@@ -12,13 +12,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.xiangan.fruitshopweb.entity.Consignor;
+import org.xiangan.fruitshopweb.entity.Person;
 import org.xiangan.fruitshopweb.entity.Product;
 import org.xiangan.fruitshopweb.enumType.ProductTypeEnum;
 import org.xiangan.fruitshopweb.enumType.UnitTypeEnum;
 import org.xiangan.fruitshopweb.exception.CustomException;
 import org.xiangan.fruitshopweb.model.PaginationRequest;
-import org.xiangan.fruitshopweb.service.ConsignorService;
+import org.xiangan.fruitshopweb.service.PersonService;
 import org.xiangan.fruitshopweb.service.ProductService;
 
 import java.math.BigDecimal;
@@ -41,19 +41,19 @@ public class ProductController {
 	private final ProductService productService;
 
 	/**
-	 * (服務層) 貨主
+	 * (服務層) 人員
 	 */
-	private final ConsignorService consignorService;
+	private final PersonService personService;
 
 	/**
 	 * 依賴注入
 	 * @param productService the productService
-	 * @param consignorService the consignorService
+	 * @param personService the personService
 	 */
 	@Autowired
-	public ProductController(ProductService productService, ConsignorService consignorService) {
+	public ProductController(ProductService productService, PersonService personService) {
 		this.productService = productService;
-		this.consignorService = consignorService;
+		this.personService = personService;
 	}
 
 	/**
@@ -81,7 +81,6 @@ public class ProductController {
 		try {
 			return productService
 				       .load(
-					       
 					       p < 1 ? 0 : p - 1,
 					       paginationRequest.getS(),
 						   isAll
@@ -126,7 +125,7 @@ public class ProductController {
 	 * @param unitPrice   產品單價
 	 * @param type        產品類型(列舉)
 	 * @param unitType    單位(列舉)
-	 * @param consignorId 貨主主鍵
+	 * @param personId 人員主鍵
 	 * @param inventory   庫存
 	 * @return 產品
 	 */
@@ -137,7 +136,7 @@ public class ProductController {
 		,@Parameter(name = "unitPrice",description = "產品單價",in = ParameterIn.QUERY,example = "50")
 		,@Parameter(name = "type",description = "產品類型(列舉)",in = ParameterIn.QUERY,example = "FRUIT")
 		,@Parameter(name = "unitType",description = "單位(列舉)",in = ParameterIn.QUERY,example = "PIECE")
-		,@Parameter(name = "consignorId",description = "貨主主鍵",in = ParameterIn.QUERY,example = "y6uItannsE")
+		,@Parameter(name = "personId",description = "人員主鍵",in = ParameterIn.QUERY,example = "y6uItannsE")
 		,@Parameter(name = "inventory",description = "庫存",in = ParameterIn.QUERY,example = "20") }
 		,responses = {
 		@ApiResponse(responseCode = "200", description = "Success", useReturnTypeSchema = true)
@@ -150,32 +149,10 @@ public class ProductController {
 		@RequestParam @NotNull(message = "產品單價不可為空❗") final BigDecimal unitPrice,
 		@RequestParam @NotNull(message = "產品類型不可為空❗") final ProductTypeEnum type,
 		@RequestParam @NotNull(message = "單位不可為空❗") final UnitTypeEnum unitType,
-		@RequestParam("consignorId") final String consignorId,
+		@RequestParam("personId") final String personId,
 		@RequestParam final double inventory
 	) {
-		Product product = new Product();
-		
-		product.setProductName(productName.trim());
-		product.setUnitPrice(unitPrice);
-		product.setType(type);
-		product.setUnitType(unitType);
-		
-		Consignor consignor;
-		try {
-			consignor = consignorService.load(consignorId).get();
-		} catch (InterruptedException | ExecutionException exception) {
-			throw new CustomException(
-				String.format("讀取貨主「%s」時拋出線程中斷異常：%s❗", consignorId, exception.getLocalizedMessage()));
-		}
-		product.setConsignor(consignor);
-		product.setInventory(inventory);
-		
-		try {
-			return productService.save(product).get();
-		} catch (InterruptedException | ExecutionException exception) {
-			throw new CustomException(
-				String.format("建立產品時拋出線程中斷異常：%s❗", exception.getLocalizedMessage()));
-		}
+		return productService.create(productName, unitPrice, type, unitType, personId, inventory);
 	}
 	
 //	/**
@@ -186,13 +163,13 @@ public class ProductController {
 //	 */
 //	@DeleteMapping("/{id:^\\d+$}")
 //	Boolean delete(@PathVariable final long id) {
-//		Consignor consignor;
+//		person person;
 //		try {
-//			consignor = consignorService.load(id).get();
+//			person = personService.load(id).get();
 //		} catch (InterruptedException | ExecutionException exception) {
 //			throw new RuntimeException(
 //				String.format(
-//					"讀取貨主「%d」時拋出線程中斷異常：%s❗",
+//					"讀取人員「%d」時拋出線程中斷異常：%s❗",
 //					id,
 //					exception.getLocalizedMessage()
 //				),
@@ -201,11 +178,11 @@ public class ProductController {
 //		}
 //
 //		try {
-//			return consignorService.delete(consignor).get();
+//			return personService.delete(person).get();
 //		} catch (InterruptedException | ExecutionException exception) {
 //			throw new RuntimeException(
 //				String.format(
-//					"刪除貨主「%d」時拋出線程中斷異常：%s❗️",
+//					"刪除人員「%d」時拋出線程中斷異常：%s❗️",
 //					id,
 //					exception.getLocalizedMessage()
 //				),
@@ -248,7 +225,7 @@ public class ProductController {
 	 * @param unitPrice 產品單價
 	 * @param type 產品類型(列舉)
 	 * @param unitType 單位(列舉)
-	 * @param consignorId 貨主主鍵
+	 * @param personId 人員主鍵
 	 * @param inventory 庫存
 	 * @return 產品
 	 */
@@ -260,7 +237,7 @@ public class ProductController {
 		,@Parameter(name = "unitPrice",description = "產品單價",in = ParameterIn.QUERY,example = "50")
 		,@Parameter(name = "type",description = "產品類型(列舉)",in = ParameterIn.QUERY,example = "FRUIT")
 		,@Parameter(name = "unitType",description = "單位(列舉)",in = ParameterIn.QUERY,example = "PIECE")
-		,@Parameter(name = "consignorId",description = "貨主主鍵",in = ParameterIn.QUERY,example = "y6uItannsE")
+		,@Parameter(name = "personId",description = "人員主鍵",in = ParameterIn.QUERY,example = "y6uItannsE")
 		,@Parameter(name = "inventory",description = "庫存",in = ParameterIn.QUERY,example = "20")
 		,@Parameter(name = "id",description = "產品主鍵 UUID(十碼)")}
 		,responses = {
@@ -275,9 +252,9 @@ public class ProductController {
 		,@RequestParam(required = false) final BigDecimal unitPrice
 		,@RequestParam(required = false) final ProductTypeEnum type
 		,@RequestParam(required = false) final UnitTypeEnum unitType
-		,@RequestParam(required = false) final String consignorId
+		,@RequestParam(required = false) final String personId
 		,@RequestParam(required = false) final Double inventory
 	) {
-		return productService.update(id, productName, unitPrice, type, unitType,consignorId,inventory);
+		return productService.update(id, productName, unitPrice, type, unitType,personId,inventory);
 	}
 }

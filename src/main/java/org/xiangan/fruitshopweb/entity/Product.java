@@ -86,7 +86,7 @@ public class Product {
 		referencedColumnName = "id"
 	)
 	@ManyToOne(optional = false)
-	private Consignor consignor;
+	private Person person;
 	
 	/**
 	 * 庫存
@@ -119,14 +119,14 @@ public class Product {
 	 * @param productName 產品名稱
 	 * @param type        產品類型(列舉)
 	 * @param unitType    單位(列舉)
-	 * @param consignor   貨主
+	 * @param person   貨主
 	 */
-	public Product(String productName, ProductTypeEnum type, UnitTypeEnum unitType, Consignor consignor) {
+	public Product(String productName, ProductTypeEnum type, UnitTypeEnum unitType, Person person) {
 		this();
 		this.productName = productName;
 		this.type = type;
 		this.unitType = unitType;
-		this.consignor = consignor;
+		this.person = person;
 	}
 	
 	@Override
@@ -136,11 +136,11 @@ public class Product {
 		if (o == null || getClass() != o.getClass())
 			return false;
 		Product product = (Product) o;
-		return consignor == product.consignor && Double.compare(inventory, product.inventory) == 0 && Objects.equals(id, product.id) && Objects.equals(productName, product.productName) && Objects.equals(unitPrice, product.unitPrice) && Objects.equals(type, product.type) && Objects.equals(unitType, product.unitType);
+		return person == product.person && Double.compare(inventory, product.inventory) == 0 && Objects.equals(id, product.id) && Objects.equals(productName, product.productName) && Objects.equals(unitPrice, product.unitPrice) && Objects.equals(type, product.type) && Objects.equals(unitType, product.unitType);
 	}
 	
 	@Override
 	public int hashCode() {
-		return Objects.hash(id, productName, unitPrice, type, unitType, consignor, inventory);
+		return Objects.hash(id, productName, unitPrice, type, unitType, person, inventory);
 	}
 }

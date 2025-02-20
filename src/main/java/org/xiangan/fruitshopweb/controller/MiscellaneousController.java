@@ -79,8 +79,8 @@ public class MiscellaneousController {
     @GetMapping
     Page<Miscellaneous> browse(
         @Validated final PaginationRequest paginationRequest
-        ,@RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")final Date begin
-        ,@RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")final Date end) {
+        ,@RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")final LocalDateTime begin
+        ,@RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")final LocalDateTime end) {
         final int p = paginationRequest.getP();
 
         try {

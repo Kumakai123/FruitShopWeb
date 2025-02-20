@@ -8,9 +8,10 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.xiangan.fruitshopweb.entity.Consignor;
+import org.xiangan.fruitshopweb.entity.Person;
 import org.xiangan.fruitshopweb.entity.Product;
 import org.xiangan.fruitshopweb.entity.Product_;
+import org.xiangan.fruitshopweb.enumType.LevelEnum;
 import org.xiangan.fruitshopweb.enumType.ProductTypeEnum;
 import org.xiangan.fruitshopweb.enumType.UnitTypeEnum;
 import org.xiangan.fruitshopweb.exception.CustomException;
@@ -36,20 +37,79 @@ public class ProductService {
 	private final ProductRepository productRepository;
 
 	/**
-	 * (服務層) 貨主
+	 * (服務層) 人員
 	 */
-	private final ConsignorService consignorService;
+	private final PersonService personService;
 
 	/**
 	 * 依賴注入
 	 *
 	 * @param productRepository the productRepository
-	 * @param consignorService the consignorService
+	 * @param personService the personService
 	 */
 	@Autowired
-	public ProductService(ProductRepository productRepository, ConsignorService consignorService) {
+	public ProductService(ProductRepository productRepository, PersonService personService) {
 		this.productRepository = productRepository;
-		this.consignorService = consignorService;
+		this.personService = personService;
+	}
+
+	/**
+	 * 建立
+	 *
+	 * @param productName 產品名稱
+	 * @param unitPrice 產品單價
+	 * @param type 產品類型(列舉)
+	 * @param unitType 單位(列舉)
+	 * @param personId 人員主鍵
+	 * @param inventory 庫存
+	 * @return 產品
+	 */
+	@Transactional
+	public Product create(
+		final String productName,
+		final BigDecimal unitPrice,
+		final ProductTypeEnum type,
+		final UnitTypeEnum unitType,
+		final String personId,
+		final Double inventory) {
+
+		Product product = new Product();
+
+		if (Objects.nonNull(productName) && !productName.isBlank()) {
+			product.setProductName(productName.trim());
+		}
+		if (Objects.nonNull(unitPrice)) {
+			product.setUnitPrice(unitPrice);
+		}
+		if (Objects.nonNull(type)) {
+			product.setType(type);
+		}
+		if (Objects.nonNull(unitType)) {
+			product.setUnitType(unitType);
+		}
+		if (Objects.nonNull(personId) && !personId.isBlank()) {
+			try {
+				Person person = personService.load(personId).get();
+				if (personService.exist(personId).get()){
+					throw new CustomException("一般職員無權限建立或編輯產品");
+				}else {
+					product.setPerson(person);
+				}
+			} catch (InterruptedException | ExecutionException exception) {
+				throw new CustomException(
+					String.format("讀取人員「%s」時拋出線程中斷異常：%s❗", personId, exception.getLocalizedMessage()));
+			}
+		}
+		if (Objects.nonNull(inventory)) {
+			product.setInventory(inventory);
+		}
+
+		try {
+			return this.save(product).get();
+		} catch (Exception exception) {
+			throw new CustomException(
+				String.format("編輯產品「%s」時拋出線程中斷異常：%s❗", product.getProductName(), exception.getLocalizedMessage()));
+		}
 	}
 
 	/**
@@ -231,13 +291,14 @@ public class ProductService {
 	}
 
 	/**
+	 * 編輯
 	 *
 	 * @param id 產品主鍵
 	 * @param productName 產品名稱
 	 * @param unitPrice 產品單價
 	 * @param type 產品類型(列舉)
 	 * @param unitType 單位(列舉)
-	 * @param consignorId 貨主主鍵
+	 * @param personId 人員主鍵
 	 * @param inventory 庫存
 	 * @return 產品
 	 */
@@ -248,7 +309,7 @@ public class ProductService {
 		final BigDecimal unitPrice,
 		final ProductTypeEnum type,
 		final UnitTypeEnum unitType,
-		final String consignorId,
+		final String personId,
 		final Double inventory) {
 
 		Product product;
@@ -259,7 +320,6 @@ public class ProductService {
 				String.format("讀取產品「%s」時拋出線程中斷異常：%s❗", id, exception.getLocalizedMessage()));
 		}
 
-		// 使用 Objects.nonNull() 和 isBlank() 簡化非空邏輯
 		if (Objects.nonNull(productName) && !productName.isBlank()) {
 			product.setProductName(productName.trim());
 		}
@@ -272,13 +332,17 @@ public class ProductService {
 		if (Objects.nonNull(unitType)) {
 			product.setUnitType(unitType);
 		}
-		if (Objects.nonNull(consignorId) && !consignorId.isBlank()) {
+		if (Objects.nonNull(personId) && !personId.isBlank()) {
 			try {
-				Consignor consignor = consignorService.load(consignorId).get();
-				product.setConsignor(consignor);
+				Person person = personService.load(personId).get();
+				if (personService.exist(personId).get()){
+					throw new CustomException("一般職員無權限建立或編輯產品");
+				}else {
+					product.setPerson(person);
+				}
 			} catch (InterruptedException | ExecutionException exception) {
 				throw new CustomException(
-					String.format("讀取貨主「%s」時拋出線程中斷異常：%s❗", consignorId, exception.getLocalizedMessage()));
+					String.format("讀取人員「%s」時拋出線程中斷異常：%s❗", personId, exception.getLocalizedMessage()));
 			}
 		}
 		if (Objects.nonNull(inventory)) {

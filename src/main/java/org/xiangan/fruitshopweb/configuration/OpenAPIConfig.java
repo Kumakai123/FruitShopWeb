@@ -3,6 +3,8 @@ package org.xiangan.fruitshopweb.configuration;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Contact;
 import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.security.SecurityRequirement;
+import io.swagger.v3.oas.models.security.SecurityScheme;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -25,8 +27,16 @@ public class OpenAPIConfig {
                         .contact(
                             new Contact()
                                 .name("kyle")
-                                .email("kyle2542736@gmail.com")
+                                .email("xxx123@gmail.com")
                         )
+            )
+	        .addSecurityItem(new SecurityRequirement().addList("BearerAuth"))
+	        .schemaRequirement("JWT Authentication",
+                    new SecurityScheme()
+                        .name("JWT Authentication")
+                        .type(SecurityScheme.Type.HTTP)
+                        .scheme("bearer")
+                        .bearerFormat("JWT")
             );
     }
 }

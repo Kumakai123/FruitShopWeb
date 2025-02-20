@@ -93,8 +93,8 @@ public class MiscellaneousService {
     public CompletableFuture<Page<Miscellaneous>> load(
         final int p
         ,final int s
-        ,final Date begin
-        ,final Date end) {
+        ,final LocalDateTime begin
+        ,final LocalDateTime end) {
         return CompletableFuture.completedFuture(
             miscellaneousRepo
                 .findAll(

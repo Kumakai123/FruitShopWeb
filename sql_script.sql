@@ -14,16 +14,19 @@ CREATE TABLE IF NOT EXISTS fruitshop.revenue
 
 ) COMMENT ='營運狀況';
 
--- consignor table
-CREATE TABLE IF NOT EXISTS fruitshop.consignor
+-- person table
+CREATE TABLE IF NOT EXISTS fruitshop.person
 (
     id        VARCHAR(36)  NOT NULL PRIMARY KEY COMMENT '主鍵(UUID)',
     nick_name VARCHAR(100) NOT NULL COMMENT '暱稱/稱呼',
     name      VARCHAR(100) DEFAULT NULL COMMENT '名字',
+    level     VARCHAR(50)  NOT NULL COMMENT '身分等級',
+    email     VARCHAR(100) DEFAULT NULL COMMENT '信箱',
+    password  VARCHAR(100) DEFAULT NULL COMMENT '密碼',
     number    VARCHAR(50)  NOT NULL COMMENT '號碼',
     company   VARCHAR(100) NOT NULL COMMENT '市場行號',
     UNIQUE KEY uq_number_company (number, company)
-) COMMENT '貨主';
+) COMMENT '人員';
 
 
 -- product table
@@ -34,11 +37,11 @@ CREATE TABLE IF NOT EXISTS fruitshop.product
     unit_price   DECIMAL(10, 2) NOT NULL DEFAULT 0 COMMENT '產品單價',
     type         VARCHAR(50)             DEFAULT NULL COMMENT '類型',
     unit_type    VARCHAR(50)             DEFAULT NULL COMMENT '單位',
-    consignor    CHAR(36)                DEFAULT NULL COMMENT '貨主',
+    person    CHAR(36)                DEFAULT NULL COMMENT '貨主',
     inventory    DECIMAL(10, 2) NOT NULL DEFAULT 0 COMMENT '庫存',
     UNIQUE KEY uq_product_name_unit_price (product_name, unit_price),
-    CONSTRAINT fk_product_consignor FOREIGN KEY (consignor)
-        REFERENCES fruitshop.consignor (id)
+    CONSTRAINT fk_product_consignor FOREIGN KEY (person)
+        REFERENCES fruitshop.person (id)
         ON UPDATE CASCADE ON DELETE SET NULL
 ) COMMENT ='產品';
 
