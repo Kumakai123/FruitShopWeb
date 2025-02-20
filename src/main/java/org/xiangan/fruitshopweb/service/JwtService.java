@@ -5,11 +5,14 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
+import javax.crypto.SecretKey;
 import java.security.Key;
+import java.util.Base64;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -19,10 +22,18 @@ import java.util.function.Function;
 @Slf4j
 public class JwtService {
 	// Token有效期限 (設定15分鐘過期)
-	private final long EXPIRATION_TIME = 60*60*1000; //單位ms
+	private static final long EXPIRATION_TIME = 60 * 60 * 1000; //單位ms
 
 	//BASE64編碼的密鑰
-	private String SECRET_KEY = "546A55A71347A254462D4......";
+	private SecretKey SECRET_KEY;
+
+	@PostConstruct
+	public void init() {
+		// 產生安全的 Base64 密鑰
+		String base64Key = "GjDCrTPK8jsBihGyjBcVBSiMUzLhotGPmknZP6sD10E="; // 先產生這個密鑰
+		byte[] decodedKey = Base64.getDecoder().decode(base64Key);
+		SECRET_KEY = Keys.hmacShaKeyFor(decodedKey);
+	}
 
 	/**
 	 * 從JWT令牌中提取用戶名
@@ -47,21 +58,22 @@ public class JwtService {
 	 * 簽發Token
 	 */
 	public String generateToken(
-		Map<String, Object> extractClaims,
-		UserDetails userDetails
+			Map<String, Object> extractClaims,
+			UserDetails userDetails
 	) {
 		return Jwts
-			.builder()
-			.setClaims(extractClaims)
-			.setSubject(userDetails.getUsername()) //以Username做為Subject
-			.setIssuedAt(new Date(System.currentTimeMillis()))
-			.setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
-			.signWith(getSignInKey(), SignatureAlgorithm.HS256)
-			.compact();
+				.builder()
+				.setClaims(extractClaims)
+				.setSubject(userDetails.getUsername()) //以Username做為Subject
+				.setIssuedAt(new Date(System.currentTimeMillis()))
+				.setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
+				.signWith(getSignInKey(), SignatureAlgorithm.HS256)
+				.compact();
 	}
 
 	/**
 	 * 驗證Token有效性，比對JWT和UserDetails的Username(Email)是否相同
+	 *
 	 * @return 有效為True，反之False
 	 */
 	public boolean isTokenValid(String token, UserDetails userDetails) {
@@ -84,22 +96,22 @@ public class JwtService {
 
 	/**
 	 * 獲取令牌中所有的聲明將其解析
+	 *
 	 * @return 令牌中所有的聲明
 	 */
 	private Claims extractAllClaims(String token) {
 		return Jwts
-			.parserBuilder()
-			.setSigningKey(getSignInKey())
-			.build()
-			.parseClaimsJws(token)
-			.getBody();
+				.parserBuilder()
+				.setSigningKey(getSignInKey())
+				.build()
+				.parseClaimsJws(token)
+				.getBody();
 	}
 
 	/**
 	 * 獲取JWT簽名的密鑰
 	 */
 	private Key getSignInKey() {
-		byte[] keyBytes = Decoders.BASE64.decode(SECRET_KEY);
-		return Keys.hmacShaKeyFor(keyBytes);
+		return SECRET_KEY;
 	}
 }
