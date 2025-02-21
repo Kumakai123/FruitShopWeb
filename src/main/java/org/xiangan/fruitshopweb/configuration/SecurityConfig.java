@@ -1,5 +1,6 @@
 package org.xiangan.fruitshopweb.configuration;
 
+import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,36 +17,35 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationProvider;
 import org.springframework.security.web.SecurityFilterChain;
 import org.xiangan.fruitshopweb.repository.PersonRepository;
+import org.xiangan.fruitshopweb.service.JwtService;
+
+import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
+import java.nio.charset.StandardCharsets;
 
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
 
+//	private static final String SECRET_KEY = "8GbDA6x8vLFWHMaRpBU5NiNawAlDb3iSi+rMCXHpSKA="; // 密鑰
 	private final PersonRepository personRepository;
+	private final JwtService jwtService;
 
-//	@Bean
-//	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-//		http.csrf(AbstractHttpConfigurer::disable)  //禁止CSRF（跨站請求偽造）保護。
-//			.authorizeHttpRequests((authorize) -> authorize //對所有訪問 HTTP 端點的 HttpServletRequest 進行限制
-//				.requestMatchers(
-//					"/swagger-ui/**",  // 允許 Swagger UI
-//					"/**/api-docs/**",  // ✅ 允許 Swagger 加載 API 定義
-//					"/swagger-resources/**",
-//					"/webjars/**",
-//					"/error"
-//				).permitAll()  //指定上述匹配規則中的路徑，允許所有用戶訪問，即不需要進行身份驗證。
-//				.anyRequest().authenticated()   //其他尚未匹配到的路徑都需要身份驗證
-//			).anonymous(Customizer.withDefaults());  // 允許匿名用戶訪問 Swagger UI;
-//		return http.build();
-//	}
 	@Bean
-	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+	public SecurityFilterChain filterChain(
+		HttpSecurity http
+	,AuthenticationProvider authenticationProvider) throws Exception {
 		http
 			.csrf(AbstractHttpConfigurer::disable)  // ✅ 停用 CSRF，避免影響 API 登入，禁止CSRF（跨站請求偽造）保護。
 			.authorizeHttpRequests(auth -> auth
+				// 訪客可使用以下 API
 				.requestMatchers(
 					"/swagger-ui/**",
 					"/v3/api-docs/**",
@@ -53,11 +53,20 @@ public class SecurityConfig {
 					"/webjars/**",
 					"/error",
 					"/api/auth/**"
-				).permitAll()  // ✅ 允許訪問這些 API
+				).permitAll()
+//				.anyRequest().permitAll()
 				.anyRequest().authenticated()  // 其他 API 需要身份驗證
 			)
-			.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))  // ✅ 使用 JWT，關閉 Session
-			.anonymous(Customizer.withDefaults());  // ✅ 允許匿名訪問 Swagger
+			.oauth2ResourceServer(oauth2 -> oauth2
+				.jwt(jwt -> jwt.decoder(jwtDecoder())) // ✅ 使用 `JwtDecoder`
+			).sessionManagement(session -> session.sessionCreationPolicy(org.springframework.security.config.http.SessionCreationPolicy.STATELESS)); // ✅ JWT 無需 session
+
+		//			// JWT驗證
+//			.oauth2ResourceServer( oauth2 -> oauth2.jwt(Customizer.withDefaults()))
+//			// 使用 JWT，關閉 Session
+//			.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+//			.authenticationProvider(authenticationProvider)
+//			.build();
 
 		return http.build();
 	}
@@ -97,5 +106,24 @@ public class SecurityConfig {
 	@Bean
 	public PasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
+	}
+
+//	@Bean
+//	public AuthenticationProvider jwtAuthenticationProvider() {
+//		return new JwtAuthenticationProvider(jwtDecoder());
+//	}
+
+	@Bean
+	public JwtDecoder jwtDecoder(JwtService jwtService) {
+		return NimbusJwtDecoder.withSecretKey(jwtService.getSecretKey()).build();
+	}
+
+	@Bean
+	public JwtAuthenticationConverter jwtAuthenticationConverter() {
+		return new JwtAuthenticationConverter();
+	}
+	@Bean
+	public JwtDecoder jwtDecoder() {
+		return NimbusJwtDecoder.withSecretKey(jwtService.getSecretKey()).build(); // ✅ **確保 `SECRET_KEY` 兩邊一致**
 	}
 }

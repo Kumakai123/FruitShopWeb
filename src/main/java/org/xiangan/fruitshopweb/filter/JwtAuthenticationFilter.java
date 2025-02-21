@@ -11,6 +11,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -35,29 +36,58 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 		final String authHeader = request.getHeader("Authorization");
 		final String jwt;
 		final String userEmail;
-		// 以下條件為沒有攜帶Token的請求
-		//如果未攜帶JWT令牌或令牌不以"Bearer "開頭，則直接呼叫filterChain.doFilter，繼續處理下一個過濾器或請求處理程序。
+
+		/*
+			以下條件為沒有攜帶 Token 的請求
+			如果未攜帶 JWT 令牌或令牌不以"Bearer "開頭，則直接呼叫 filterChain.doFilter，繼續處理下一個過濾器或請求處理程序。
+		 */
 		if (authHeader == null || !authHeader.startsWith("Bearer ")) {
 			filterChain.doFilter(request, response);
 			return;
 		}
-		jwt = authHeader.substring(7); //取"Bearer "後面的Token
-		userEmail = jwtService.extractUsername(jwt); //提取Token中的Email
-		//如果用戶名不為null且當前的Security上下文中不存在身份驗證
+
+		// 取"Bearer "後面的Token
+		jwt = authHeader.substring(7);
+		try {
+			//提取Token中的Email
+			userEmail = jwtService.extractUsername(jwt);
+		} catch (Exception e) {
+			log.error("Failed to extract username from token", e);
+			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+			response.getWriter().write("Invalid JWT token");
+			response.getWriter().flush();
+			return;
+		}
+
+		// 如果 userEmail 不為 null 且當前的 Security 上下文中不存在身份驗證
 		if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-			UserDetails userDetails = this.userDetailsService.loadUserByUsername(userEmail); //使用UserDetailsService根據用戶名（Email）加載用戶詳細信息。
+			UserDetails userDetails;
+			try {
+				// 根據 userEmail 加載用戶詳細資料。
+				userDetails = this.userDetailsService.loadUserByUsername(userEmail);
+			} catch (UsernameNotFoundException e) {
+				log.error("User not found: " + userEmail, e);
+				response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+				response.getWriter().write("User not found");
+				response.getWriter().flush();
+				return;
+			}
+
 			if (jwtService.isTokenValid(jwt, userDetails)) {
-				//如果JWT令牌有效，則創建一個UsernamePasswordAuthenticationToken並將其設置到Spring Security的Security上下文中，以確保用戶已成功驗證。
+
+				// 如果JWT令牌有效，則創建一個 UsernamePasswordAuthenticationToken
+				// 並將其設置到 Spring Security 的 Security 上下文中，以確保用戶已成功驗證。
 				UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-					userDetails,
-					null,
-					userDetails.getAuthorities()
+					userDetails, null, userDetails.getAuthorities()
 				);
 				authToken.setDetails(
 					new WebAuthenticationDetailsSource().buildDetails(request)
 				);
 				SecurityContextHolder.getContext().setAuthentication(authToken);
 			} else {
+				response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+				response.getWriter().write("Invalid or expired JWT token");
+				response.getWriter().flush();
 				return;
 			}
 		}

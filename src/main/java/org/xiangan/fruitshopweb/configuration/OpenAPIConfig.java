@@ -1,5 +1,6 @@
 package org.xiangan.fruitshopweb.configuration;
 
+import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Contact;
 import io.swagger.v3.oas.models.info.Info;
@@ -30,13 +31,17 @@ public class OpenAPIConfig {
                                 .email("xxx123@gmail.com")
                         )
             )
-	        .addSecurityItem(new SecurityRequirement().addList("BearerAuth"))
-	        .schemaRequirement("JWT Authentication",
-                    new SecurityScheme()
-                        .name("JWT Authentication")
-                        .type(SecurityScheme.Type.HTTP)
-                        .scheme("bearer")
-                        .bearerFormat("JWT")
-            );
+	        .addSecurityItem(
+		        new SecurityRequirement().addList("BearerAuth")
+	        )
+	        .components(new Components()  // 使用 Components 註冊 SecurityScheme
+		        .addSecuritySchemes("BearerAuth",
+			        new SecurityScheme()
+				        .name("BearerAuth") // 與上面 SecurityRequirement 一致
+				        .type(SecurityScheme.Type.HTTP)
+				        .scheme("bearer")
+				        .bearerFormat("JWT")
+		        )
+	        );
     }
 }

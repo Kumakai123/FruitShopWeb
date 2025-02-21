@@ -12,10 +12,7 @@ import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
 import java.security.Key;
-import java.util.Base64;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 
 @Service
@@ -30,7 +27,7 @@ public class JwtService {
 	@PostConstruct
 	public void init() {
 		// 產生安全的 Base64 密鑰
-		String base64Key = "GjDCrTPK8jsBihGyjBcVBSiMUzLhotGPmknZP6sD10E="; // 先產生這個密鑰
+		String base64Key = "8GbDA6x8vLFWHMaRpBU5NiNawAlDb3iSi+rMCXHpSKA="; // 先產生這個密鑰
 		byte[] decodedKey = Base64.getDecoder().decode(base64Key);
 		SECRET_KEY = Keys.hmacShaKeyFor(decodedKey);
 	}
@@ -63,6 +60,7 @@ public class JwtService {
 	) {
 		return Jwts
 				.builder()
+				.setIssuer("XianAn's authServer.")
 				.setClaims(extractClaims)
 				.setSubject(userDetails.getUsername()) //以Username做為Subject
 				.setIssuedAt(new Date(System.currentTimeMillis()))
@@ -86,7 +84,6 @@ public class JwtService {
 	 */
 	private boolean isTokenExpired(String token) {
 		final Date expirationDate = extractExpiration(token);
-		//        return extractExpiration(token).before(new Date());
 		return expirationDate != null && expirationDate.before(new Date());
 	}
 
@@ -114,4 +111,8 @@ public class JwtService {
 	private Key getSignInKey() {
 		return SECRET_KEY;
 	}
+	public SecretKey getSecretKey() {
+		return SECRET_KEY;
+	}
+
 }

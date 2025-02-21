@@ -63,6 +63,10 @@ public class AuthenticationService {
 		var user = personRepository.findByEmail(email).orElseThrow();
 		var jwtToken = jwtService.generateToken(user);
 		log.info(jwtToken);
-		return AuthenticationResponse.builder().status("成功" ).token(jwtToken).build();
+		return AuthenticationResponse
+			.builder()
+			.status("成功" )
+			.token(jwtToken)
+			.build();
 	}
 }
