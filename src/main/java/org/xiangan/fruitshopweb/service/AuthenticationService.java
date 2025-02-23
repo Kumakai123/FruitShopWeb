@@ -1,9 +1,10 @@
 package org.xiangan.fruitshopweb.service;
 
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.xiangan.fruitshopweb.entity.Person;
@@ -15,13 +16,15 @@ import org.xiangan.fruitshopweb.repository.PersonRepository;
 
 @Service
 @Slf4j
-@AllArgsConstructor
 public class AuthenticationService {
-	private final AuthenticationManager authenticationManager;
-	private final PersonRepository personRepository;
-	private final PersonService personService;
-	private final PasswordEncoder passwordEncoder;
-	private final JwtService jwtService;
+	@Autowired
+	private  AuthenticationManager authenticationManager;
+	@Autowired
+	private  PersonRepository personRepository;
+	@Autowired
+	private PasswordEncoder passwordEncoder;
+	@Autowired
+	private JwtService jwtService;
 
 	/**
 	 * 註冊

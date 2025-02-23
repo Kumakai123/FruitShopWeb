@@ -1,6 +1,5 @@
 package org.xiangan.fruitshopweb.configuration;
 
-import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,68 +16,53 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.oauth2.jwt.JwtDecoder;
-import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
-import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
-import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationProvider;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.xiangan.fruitshopweb.filter.JwtAuthenticationFilter;
+import org.xiangan.fruitshopweb.filter.JwtFilter;
 import org.xiangan.fruitshopweb.repository.PersonRepository;
-import org.xiangan.fruitshopweb.service.JwtService;
-
-import javax.crypto.SecretKey;
-import javax.crypto.spec.SecretKeySpec;
-import java.nio.charset.StandardCharsets;
 
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-//	private static final String SECRET_KEY = "8GbDA6x8vLFWHMaRpBU5NiNawAlDb3iSi+rMCXHpSKA="; // 密鑰
 	private final PersonRepository personRepository;
-	private final JwtService jwtService;
+	private final JwtAuthenticationFilter jwtFiler;
 
 	@Bean
-	public SecurityFilterChain filterChain(
-		HttpSecurity http
-	,AuthenticationProvider authenticationProvider) throws Exception {
+	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 		http
-			.csrf(AbstractHttpConfigurer::disable)  // ✅ 停用 CSRF，避免影響 API 登入，禁止CSRF（跨站請求偽造）保護。
-			.authorizeHttpRequests(auth -> auth
-				// 訪客可使用以下 API
-				.requestMatchers(
-					"/swagger-ui/**",
-					"/v3/api-docs/**",
-					"/swagger-resources/**",
-					"/webjars/**",
-					"/error",
-					"/api/auth/**"
-				).permitAll()
-//				.anyRequest().permitAll()
-				.anyRequest().authenticated()  // 其他 API 需要身份驗證
-			)
-			.oauth2ResourceServer(oauth2 -> oauth2
-				.jwt(jwt -> jwt.decoder(jwtDecoder())) // ✅ 使用 `JwtDecoder`
-			).sessionManagement(session -> session.sessionCreationPolicy(org.springframework.security.config.http.SessionCreationPolicy.STATELESS)); // ✅ JWT 無需 session
-
-		//			// JWT驗證
-//			.oauth2ResourceServer( oauth2 -> oauth2.jwt(Customizer.withDefaults()))
-//			// 使用 JWT，關閉 Session
-//			.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-//			.authenticationProvider(authenticationProvider)
-//			.build();
+				.csrf(AbstractHttpConfigurer::disable)  // ✅ 停用 CSRF，避免影響 API 登入，禁止CSRF（跨站請求偽造）保護。
+				// ✅ JWT 無需 session
+				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+				.authorizeHttpRequests(auth -> auth
+						// 訪客可使用以下 API
+						.requestMatchers(
+								"/swagger-ui/**",
+								"/v3/api-docs/**",
+								"/swagger-resources/**",
+								"/webjars/**",
+								"/error",
+								"/api/auth/**"
+						).permitAll()
+						.anyRequest().authenticated()  // 其他 API 需要身份驗證
+				)
+				.anonymous(Customizer.withDefaults())
+				.addFilterBefore(jwtFiler, UsernamePasswordAuthenticationFilter.class);
 
 		return http.build();
 	}
 
 	/**
 	 * 用於查找用戶詳細信息
+	 *
 	 * @return userEmail(用戶詳細信息)
 	 */
 	@Bean
 	public UserDetailsService userDetailsService() {
 		return userEmail -> personRepository.findByEmail(userEmail)
-			.orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + userEmail));
+				.orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + userEmail));
 	}
 
 	/**
@@ -88,7 +72,7 @@ public class SecurityConfig {
 	public AuthenticationProvider authenticationProvider() {
 		DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
 		authProvider.setUserDetailsService(userDetailsService());
-		authProvider.setPasswordEncoder(passwordEncoder());
+		authProvider.setPasswordEncoder((new BCryptPasswordEncoder(12)));
 		return authProvider;
 	}
 
@@ -112,18 +96,18 @@ public class SecurityConfig {
 //	public AuthenticationProvider jwtAuthenticationProvider() {
 //		return new JwtAuthenticationProvider(jwtDecoder());
 //	}
+//
+//	@Bean
+//	public JwtDecoder jwtDecoder(JwtService jwtService) {
+//		return NimbusJwtDecoder.withSecretKey(jwtService.getSecretKey()).build();
+//	}
 
-	@Bean
-	public JwtDecoder jwtDecoder(JwtService jwtService) {
-		return NimbusJwtDecoder.withSecretKey(jwtService.getSecretKey()).build();
-	}
-
-	@Bean
-	public JwtAuthenticationConverter jwtAuthenticationConverter() {
-		return new JwtAuthenticationConverter();
-	}
-	@Bean
-	public JwtDecoder jwtDecoder() {
-		return NimbusJwtDecoder.withSecretKey(jwtService.getSecretKey()).build(); // ✅ **確保 `SECRET_KEY` 兩邊一致**
-	}
+//	@Bean
+//	public JwtAuthenticationConverter jwtAuthenticationConverter() {
+//		return new JwtAuthenticationConverter();
+//	}
+//	@Bean
+//	public JwtDecoder jwtDecoder() {
+//		return NimbusJwtDecoder.withSecretKey(jwtService.getSecretKey()).build(); // ✅ **確保 `SECRET_KEY` 兩邊一致**
+//	}
 }
