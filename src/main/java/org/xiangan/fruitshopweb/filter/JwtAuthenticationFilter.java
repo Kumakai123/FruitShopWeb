@@ -5,8 +5,8 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -20,13 +20,19 @@ import org.xiangan.fruitshopweb.service.PersonService;
 import java.io.IOException;
 
 @Component
+@RequiredArgsConstructor
 @Slf4j
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-	@Autowired
-	private  JwtService jwtService;
-	@Autowired
-	private PersonService personService;
+	/**
+	 * JWT 生成與驗證
+	 */
+	private  final JwtService jwtService;
+
+	/**
+	 * (服務層) 人員
+	 */
+	private final PersonService personService;
 
 	@Override
 	protected void doFilterInternal(

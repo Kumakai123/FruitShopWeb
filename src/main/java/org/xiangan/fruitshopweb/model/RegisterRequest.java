@@ -1,17 +1,19 @@
 package org.xiangan.fruitshopweb.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import org.xiangan.fruitshopweb.enumType.LevelEnum;
 
-@Data
-@AllArgsConstructor
-public class RegisterRequest {
-	private final String nickName;
-	private final String name;
-	private final LevelEnum level;
-	private final String email;
-	private final String password;
-	private final String phoneNumber;
-	private final String company;
-}
+/**
+ * 註冊請求
+ */
+public record RegisterRequest(
+	String nickName
+	, @NotBlank String name
+	, LevelEnum level
+	, @Email @NotBlank String email
+	, @Size(min = 8, max = 20)String password
+	, String phoneNumber
+	, String company
+) {}

@@ -19,7 +19,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.xiangan.fruitshopweb.filter.JwtAuthenticationFilter;
-import org.xiangan.fruitshopweb.filter.JwtFilter;
 import org.xiangan.fruitshopweb.repository.PersonRepository;
 
 @Configuration
@@ -33,8 +32,9 @@ public class SecurityConfig {
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 		http
-				.csrf(AbstractHttpConfigurer::disable)  // ✅ 停用 CSRF，避免影響 API 登入，禁止CSRF（跨站請求偽造）保護。
-				// ✅ JWT 無需 session
+				// 停用 CSRF，避免影響 API 登入，禁止CSRF（跨站請求偽造）保護。
+				.csrf(AbstractHttpConfigurer::disable)
+				// JWT 無需 session
 				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 				.authorizeHttpRequests(auth -> auth
 						// 訪客可使用以下 API
@@ -44,7 +44,7 @@ public class SecurityConfig {
 								"/swagger-resources/**",
 								"/webjars/**",
 								"/error",
-								"/api/auth/**"
+								"/auth/**"
 						).permitAll()
 						.anyRequest().authenticated()  // 其他 API 需要身份驗證
 				)
@@ -92,22 +92,4 @@ public class SecurityConfig {
 		return new BCryptPasswordEncoder();
 	}
 
-//	@Bean
-//	public AuthenticationProvider jwtAuthenticationProvider() {
-//		return new JwtAuthenticationProvider(jwtDecoder());
-//	}
-//
-//	@Bean
-//	public JwtDecoder jwtDecoder(JwtService jwtService) {
-//		return NimbusJwtDecoder.withSecretKey(jwtService.getSecretKey()).build();
-//	}
-
-//	@Bean
-//	public JwtAuthenticationConverter jwtAuthenticationConverter() {
-//		return new JwtAuthenticationConverter();
-//	}
-//	@Bean
-//	public JwtDecoder jwtDecoder() {
-//		return NimbusJwtDecoder.withSecretKey(jwtService.getSecretKey()).build(); // ✅ **確保 `SECRET_KEY` 兩邊一致**
-//	}
 }

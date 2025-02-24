@@ -1,9 +1,10 @@
 package org.xiangan.fruitshopweb.model;
 
 import lombok.Builder;
-import lombok.Data;
 
-@Data
+/**
+ * 登入狀態
+ */
 @Builder
 public class StatusResponse {
 	private String status;

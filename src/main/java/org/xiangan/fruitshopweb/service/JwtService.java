@@ -3,116 +3,107 @@ package org.xiangan.fruitshopweb.service;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
-import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
-import javax.crypto.SecretKey;
 import java.security.Key;
-import java.util.*;
+import java.util.Base64;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Function;
 
 @Service
 @Slf4j
 public class JwtService {
-	// Token有效期限 (設定15分鐘過期)
-	private static final long EXPIRATION_TIME = 60 * 60 * 1000; //單位ms
 
-	//BASE64編碼的密鑰
-	private SecretKey SECRET_KEY;
+	/** Token 有效期限 (1 小時) */
+	private static final long EXPIRATION_TIME = 60 * 60 * 1000; // 單位 ms
 
-	@PostConstruct
-	public void init() {
-		// 產生安全的 Base64 密鑰
-		String base64Key = "8GbDA6x8vLFWHMaRpBU5NiNawAlDb3iSi+rMCXHpSKA="; // 先產生這個密鑰
+	/** 密鑰 */
+	private final Key SECRET_KEY;
+
+	/**
+	 * 透過 `@Value` 讀取 Base64 密鑰，並在建構子中初始化 `SECRET_KEY`
+	 */
+	public JwtService(@Value("${jwt.secret}") String base64Key) {
 		byte[] decodedKey = Base64.getDecoder().decode(base64Key);
-		SECRET_KEY = Keys.hmacShaKeyFor(decodedKey);
+		this.SECRET_KEY = Keys.hmacShaKeyFor(decodedKey);
 	}
 
 	/**
-	 * 從JWT令牌中提取用戶名
+	 * 從 Token 中提取使用者名稱
+	 * @param token JWT Token
+	 * @return 使用者名稱
 	 */
 	public String extractUsername(String token) {
 		return extractClaim(token, Claims::getSubject);
 	}
 
 	/**
-	 * 提取JWT令牌中的任何聲明（Claims），並通過提供的Function來解析它們。
+	 * 提取 JWT 令牌中的 Claims，並通過 Function 解析
 	 */
 	public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
 		final Claims claims = extractAllClaims(token);
 		return claimsResolver.apply(claims);
 	}
 
+	/**
+	 * 生成 JWT Token（無額外 Claims）
+	 * @param userDetails UserDetails
+	 * @return Token
+	 */
 	public String generateToken(UserDetails userDetails) {
 		return generateToken(new HashMap<>(), userDetails);
 	}
 
 	/**
-	 * 簽發Token
+	 * 生成 JWT Token（可附加 Claims）
+	 * @param extraClaims 額外的 Claims
+	 * @param userDetails UserDetails
+	 * @return Token
 	 */
-	public String generateToken(
-			Map<String, Object> extractClaims,
-			UserDetails userDetails
-	) {
-		return Jwts
-				.builder()
-				.setIssuer("XianAn's authServer.")
-				.setClaims(extractClaims)
-				.setSubject(userDetails.getUsername()) //以Username做為Subject
-				.setIssuedAt(new Date(System.currentTimeMillis()))
-				.setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
-				.signWith(getSignInKey(), SignatureAlgorithm.HS256)
-				.compact();
+	public String generateToken(Map<String, Object> extraClaims, UserDetails userDetails) {
+		return Jwts.builder()
+			.setIssuer("XianAn's authServer") // 設定發行者
+			.setClaims(extraClaims)
+			.setSubject(userDetails.getUsername()) // 使用者名稱 (Email)
+			.setIssuedAt(new Date(System.currentTimeMillis())) // 簽發時間
+			.setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME)) // 過期時間
+			.signWith(SECRET_KEY, SignatureAlgorithm.HS256) // 使用 HMAC-SHA256 簽名算法
+			.compact();
 	}
 
 	/**
-	 * 驗證Token有效性，比對JWT和UserDetails的Username(Email)是否相同
-	 *
-	 * @return 有效為True，反之False
+	 * 驗證 Token 是否有效
+	 * @param token JWT Token
+	 * @param userDetails UserDetails
+	 * @return 是否有效
 	 */
 	public boolean isTokenValid(String token, UserDetails userDetails) {
 		final String username = extractUsername(token);
-		return (username.equals(userDetails.getUsername())) && !isTokenExpired(token);
+		return username.equals(userDetails.getUsername()) && !isTokenExpired(token);
 	}
 
 	/**
-	 * 驗證token是否過期
+	 * 驗證 Token 是否過期
 	 */
 	private boolean isTokenExpired(String token) {
-		final Date expirationDate = extractExpiration(token);
-		return expirationDate != null && expirationDate.before(new Date());
-	}
-
-	private Date extractExpiration(String token) {
-		return extractClaim(token, Claims::getExpiration);
+		final Date expirationDate = extractClaim(token, Claims::getExpiration);
+		return expirationDate.before(new Date());
 	}
 
 	/**
-	 * 獲取令牌中所有的聲明將其解析
-	 *
-	 * @return 令牌中所有的聲明
+	 * 解析 JWT 令牌，提取所有 Claims
 	 */
 	private Claims extractAllClaims(String token) {
-		return Jwts
-				.parserBuilder()
-				.setSigningKey(getSignInKey())
-				.build()
-				.parseClaimsJws(token)
-				.getBody();
+		return Jwts.parserBuilder()
+			.setSigningKey(SECRET_KEY)
+			.build()
+			.parseClaimsJws(token)
+			.getBody();
 	}
-
-	/**
-	 * 獲取JWT簽名的密鑰
-	 */
-	private Key getSignInKey() {
-		return SECRET_KEY;
-	}
-	public SecretKey getSecretKey() {
-		return SECRET_KEY;
-	}
-
 }
