@@ -82,7 +82,7 @@ public class Product {
 	 * 貨主
 	 */
 	@JoinColumn(
-		name = "consignor",
+		name = "person",
 		nullable = false,
 		referencedColumnName = "id"
 	)
