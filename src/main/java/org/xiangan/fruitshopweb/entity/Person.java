@@ -1,6 +1,8 @@
 package org.xiangan.fruitshopweb.entity;
 
 import com.aventrix.jnanoid.jnanoid.NanoIdUtils;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -86,6 +88,7 @@ public class Person implements UserDetails {
 	@Basic(optional = false)
 	@Column(name = "password",nullable = false)
 	@NotNull
+	@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
 	private String password;
 
 	/**

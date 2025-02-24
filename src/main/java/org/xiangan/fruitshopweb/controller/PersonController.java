@@ -6,15 +6,19 @@ import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.xiangan.fruitshopweb.entity.Person;
 import org.xiangan.fruitshopweb.enumType.LevelEnum;
 import org.xiangan.fruitshopweb.exception.CustomException;
+import org.xiangan.fruitshopweb.model.ApiResponseDTO;
 import org.xiangan.fruitshopweb.model.PaginationRequest;
+import org.xiangan.fruitshopweb.model.RegisterRequest;
+import org.xiangan.fruitshopweb.service.AuthenticationService;
 import org.xiangan.fruitshopweb.service.PersonService;
 
 import java.util.concurrent.ExecutionException;
@@ -24,6 +28,7 @@ import java.util.concurrent.ExecutionException;
  */
 @RestController
 @RequestMapping("/consignor")
+@RequiredArgsConstructor
 @Slf4j
 @Tag(name = "人員 api",description = "人員的 CRUD")
 public class PersonController {
@@ -34,13 +39,9 @@ public class PersonController {
 	private final PersonService personService;
 
 	/**
-	 * 依賴注入
-	 * @param personService the consignorService
+	 * (服務層)身分驗證
 	 */
-	@Autowired
-	public PersonController(PersonService personService) {
-		this.personService = personService;
-	}
+	private final AuthenticationService service;
 
 	/**
 	 * 瀏覽
@@ -101,58 +102,19 @@ public class PersonController {
 	/**
 	 * 建立
 	 *
-	 * @param nickName    暱稱/稱呼
-	 * @param name        名字
-	 * @param level       身分等級
-	 * @param email       信箱
-	 * @param password    密碼
-	 * @param phoneNumber 連絡電話
-	 * @param company     公司行號/統編
+	 * @param request 註冊請求
 	 * @return 人員
 	 */
 	@Operation(
 		summary = "建立人員資料"
-		,parameters = {
-			@Parameter(name = "nickName",description = "暱稱/稱呼",in = ParameterIn.QUERY,example = "陳大哥")
-			,@Parameter(name = "name",description = "名字",in = ParameterIn.QUERY,example = "陳浩銘")
-			,@Parameter(name = "level",description = "身分等級",in = ParameterIn.QUERY,example = "CONSIGNOR")
-			,@Parameter(name = "email",description = "信箱",in = ParameterIn.QUERY,example = "abc123@gmail.com")
-			,@Parameter(name = "password",description = "密碼",in = ParameterIn.QUERY,example = "test")
-			,@Parameter(name = "phoneNumber",description = "連絡電話",in = ParameterIn.QUERY,example = "0912345678")
-			,@Parameter(name = "company",description = "公司行號/統編",in = ParameterIn.QUERY,example = "test123") }
 		,responses = {
 			@ApiResponse(responseCode = "200", description = "Success", useReturnTypeSchema = true)
 			,@ApiResponse(responseCode = "400", description = "參數有誤", content = @Content)
 			,@ApiResponse(responseCode = "500", description = "伺服器請求失敗", content = @Content)
 	})
 	@PostMapping
-	Person create(
-		@RequestParam final String nickName
-		,@RequestParam final String name
-		,@RequestParam final LevelEnum level
-		,@RequestParam final String email
-		,@RequestParam final String password
-		,@RequestParam final String phoneNumber
-		,@RequestParam final String company
-	) {
-		Person person = new Person(
-			nickName.trim()
-			,name.trim()
-			,level
-			,email.trim()
-			,password.trim()
-			,phoneNumber.trim()
-			,company.trim()
-		);
-
-		try {
-			return personService.save(person).get();
-		} catch (InterruptedException | ExecutionException exception) {
-			throw new CustomException(String.format(
-				"建立人員時拋出線程中斷異常：%s❗",
-				exception.getLocalizedMessage()
-			));
-		}
+	ResponseEntity<ApiResponseDTO<?>> create(@RequestBody @Validated RegisterRequest request) {
+		return service.register(request);
 	}
 
 	/**

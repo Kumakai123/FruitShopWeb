@@ -1,6 +1,7 @@
 package org.xiangan.fruitshopweb.entity;
 
 import com.aventrix.jnanoid.jnanoid.NanoIdUtils;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
@@ -86,6 +87,8 @@ public class Product {
 		referencedColumnName = "id"
 	)
 	@ManyToOne(optional = false)
+	@JsonIgnoreProperties({"nickName", "level", "company", "enabled", "username", "authorities",
+		"accountNonExpired", "credentialsNonExpired", "accountNonLocked"})
 	private Person person;
 	
 	/**
