@@ -8,8 +8,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.validation.annotation.Validated;
@@ -20,14 +20,16 @@ import org.xiangan.fruitshopweb.model.PaginationRequest;
 import org.xiangan.fruitshopweb.service.PurchaseService;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.concurrent.ExecutionException;
 
 /**
  * 進貨單
+ *
+ * @author kyle
  */
-@RestController
 @RequestMapping("/purchase")
+@RequiredArgsConstructor
+@RestController
 @Slf4j
 @Tag(name = "進貨單 api",description = "進貨單操作")
 public class PurchaseController {
@@ -36,15 +38,6 @@ public class PurchaseController {
 	 * (服務層) 進貨單
 	 */
 	private final PurchaseService purchaseService;
-
-	/**
-	 * 依賴注入
-	 * @param purchaseService the purchaseService
-	 */
-	@Autowired
-	public PurchaseController(PurchaseService purchaseService) {
-		this.purchaseService = purchaseService;
-	}
 
 	/**
 	 * 瀏覽

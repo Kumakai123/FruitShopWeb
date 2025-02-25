@@ -1,8 +1,8 @@
 package org.xiangan.fruitshopweb.service;
 
 import jakarta.persistence.criteria.Predicate;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.scheduling.annotation.Async;
@@ -21,7 +21,10 @@ import java.util.concurrent.ExecutionException;
 
 /**
  * (服務層) 雜物
+ *
+ * @author kyle
  */
+@RequiredArgsConstructor
 @Service
 @Slf4j
 public class MiscellaneousService {
@@ -30,15 +33,6 @@ public class MiscellaneousService {
 	 * (數據存取對象)雜物
 	 */
     private final MiscellaneousRepository miscellaneousRepo;
-
-	/**
-	 * 依賴注入
-	 * @param miscellaneousRepo the miscellaneousRepo
-	 */
-    @Autowired
-	public MiscellaneousService(MiscellaneousRepository miscellaneousRepo) {
-		this.miscellaneousRepo = miscellaneousRepo;
-	}
 
 	/**
 	 * @param entity 營業狀況

@@ -5,6 +5,8 @@ import lombok.Data;
 
 /**
  * 身分驗證回應
+ *
+ * @author kyle
  */
 @Data
 @Builder

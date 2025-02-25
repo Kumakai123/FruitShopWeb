@@ -18,38 +18,38 @@ public class RevenueRequest {
 		groups = {RevenueRequest.Update.class},
 		message = "請輸入「主鍵」❗️"
 	)
-	
+	private Long id;
+
 	/**
 	 * 總收入
 	 */
-	private Long id;
 	private BigDecimal grossIncome;
-	private BigDecimal netIncome;
-	private BigDecimal purchasesExpense;
-	private BigDecimal personnelExpenses;
-	private BigDecimal miscellaneousExpense;
-	private BigDecimal wastage;
-	
+
 	/**
 	 * 淨收入
 	 */
-	
+	private BigDecimal netIncome;
+
 	/**
 	 * 進貨成本
 	 */
-	
+	private BigDecimal purchasesExpense;
+
 	/**
 	 * 人事成本
 	 */
-	
+	private BigDecimal personnelExpenses;
+
 	/**
 	 * 雜物成本
 	 */
-	
+	private BigDecimal miscellaneousExpense;
+
 	/**
 	 * 損耗
 	 */
-	
+	private BigDecimal wastage;
+
 	
 	public interface Create extends Default {
 	}

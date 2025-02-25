@@ -21,12 +21,38 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.xiangan.fruitshopweb.filter.JwtAuthenticationFilter;
 import org.xiangan.fruitshopweb.repository.PersonRepository;
 
+/**
+ * 應用程式的安全性設定。
+ * <p>
+ * 設定應用程式的身份驗證、授權、CORS 及 Session 管理，透過 Spring Security 保護系統資源。
+ * </p>
+ * <p>
+ * 透過這個設定，可以自訂 API 存取規則、使用者身份驗證方式，確保系統安全性。
+ * </p>
+ *
+ * <h2>設定內容：</h2>
+ * <ul>
+ *   <li>使用 JWT 進行身份驗證</li>
+ *   <li>限制 API 路由的存取權限</li>
+ *   <li>允許跨來源請求（CORS）</li>
+ *   <li>關閉 CSRF 以支援無狀態身份驗證</li>
+ * </ul>
+ *
+ * @author kyle
+ */
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
 
+	/**
+	 * (數據存取層)人員
+	 */
 	private final PersonRepository personRepository;
+
+	/**
+	 * Jwt 驗證過濾器
+	 */
 	private final JwtAuthenticationFilter jwtFiler;
 
 	@Bean

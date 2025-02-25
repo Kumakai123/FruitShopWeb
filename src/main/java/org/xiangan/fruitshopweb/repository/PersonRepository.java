@@ -9,6 +9,8 @@ import java.util.Optional;
 
 /**
  * (數據存取對象)人員
+ *
+ * @author kyle
  */
 @Repository
 public interface PersonRepository extends JpaRepository<Person, Long>, JpaSpecificationExecutor<Person> {

@@ -6,6 +6,11 @@ import lombok.Getter;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+/**
+ * 營收總計金額 DTO
+ *
+ * @author kyle
+ */
 @AllArgsConstructor
 @Getter
 public class SummaryAmountDTO {

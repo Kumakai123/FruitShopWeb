@@ -6,10 +6,8 @@ import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.constraints.Digits;
-import jakarta.validation.constraints.Pattern;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -19,14 +17,16 @@ import org.xiangan.fruitshopweb.model.PaginationRequest;
 import org.xiangan.fruitshopweb.service.RevenueService;
 
 import java.math.BigDecimal;
-import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 
 /**
  * 營收狀況
+ *
+ * @author kyle
  */
-@RestController
 @RequestMapping("/revenue")
+@RequiredArgsConstructor
+@RestController
 @Slf4j
 @Tag(name = "營收狀況 api")
 public class RevenueController {
@@ -35,15 +35,6 @@ public class RevenueController {
 	 * (服務層) 營收狀況
 	 */
 	private final RevenueService revenueService;
-
-	/**
-	 * 依賴注入
-	 * @param revenueService the revenueService
-	 */
-	@Autowired
-	public RevenueController(RevenueService revenueService) {
-		this.revenueService = revenueService;
-	}
 
 	/**
 	 * 瀏覽

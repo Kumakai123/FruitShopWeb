@@ -16,6 +16,24 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
+/**
+ * JWT 驗證與管理服務。
+ * <p>
+ * 負責處理 JSON Web Token (JWT) 的生成、解析與驗證，提供 Spring Security 的身份驗證機制。
+ * </p>
+ *
+ * <h2>功能說明：</h2>
+ * <ul>
+ *   <li>生成 JWT Token，內含使用者資訊與有效期限</li>
+ *   <li>從 Token 解析使用者名稱與 Claims</li>
+ *   <li>驗證 Token 是否有效（比對使用者並檢查是否過期）</li>
+ * </ul>
+ *
+ * <h3>安全性說明：</h3>
+ * 採用 HMAC-SHA256 (`HS256`) 進行簽名，並使用 Base64 編碼的密鑰 (`jwt.secret`) 來初始化 HMAC 簽名密鑰。
+ *
+ * @author kyle
+ */
 @Service
 @Slf4j
 public class JwtService {
@@ -27,7 +45,9 @@ public class JwtService {
 	private final Key SECRET_KEY;
 
 	/**
-	 * 透過 `@Value` 讀取 Base64 密鑰，並在建構子中初始化 `SECRET_KEY`
+	 * 透過 `@Value` 讀取 Base64 密鑰，並在建構子中初始化 `SECRET_KEY`。
+	 *
+	 * @param base64Key Base64 編碼的 JWT 簽名密鑰
 	 */
 	public JwtService(@Value("${jwt.secret}") String base64Key) {
 		byte[] decodedKey = Base64.getDecoder().decode(base64Key);
@@ -36,15 +56,22 @@ public class JwtService {
 
 	/**
 	 * 從 Token 中提取使用者名稱
+	 *
 	 * @param token JWT Token
 	 * @return 使用者名稱
 	 */
+
 	public String extractUsername(String token) {
 		return extractClaim(token, Claims::getSubject);
 	}
 
 	/**
-	 * 提取 JWT 令牌中的 Claims，並通過 Function 解析
+	 * 從 JWT Token 解析特定的 Claim
+	 *
+	 * @param token JWT Token
+	 * @param claimsResolver Claim 解析函數
+	 * @param <T> Claim 類型
+	 * @return 解析後的 Claim 值
 	 */
 	public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
 		final Claims claims = extractAllClaims(token);
@@ -53,6 +80,7 @@ public class JwtService {
 
 	/**
 	 * 生成 JWT Token（無額外 Claims）
+	 *
 	 * @param userDetails UserDetails
 	 * @return Token
 	 */
@@ -62,6 +90,7 @@ public class JwtService {
 
 	/**
 	 * 生成 JWT Token（可附加 Claims）
+	 *
 	 * @param extraClaims 額外的 Claims
 	 * @param userDetails UserDetails
 	 * @return Token
@@ -79,9 +108,10 @@ public class JwtService {
 
 	/**
 	 * 驗證 Token 是否有效
+	 *
 	 * @param token JWT Token
-	 * @param userDetails UserDetails
-	 * @return 是否有效
+	 * @param userDetails 使用者詳細資訊
+	 * @return Token 是否有效
 	 */
 	public boolean isTokenValid(String token, UserDetails userDetails) {
 		final String username = extractUsername(token);
@@ -90,6 +120,9 @@ public class JwtService {
 
 	/**
 	 * 驗證 Token 是否過期
+	 *
+	 * @param token JWT Token
+	 * @return Token 是否過期
 	 */
 	private boolean isTokenExpired(String token) {
 		final Date expirationDate = extractClaim(token, Claims::getExpiration);
@@ -98,6 +131,9 @@ public class JwtService {
 
 	/**
 	 * 解析 JWT 令牌，提取所有 Claims
+	 *
+	 * @param token JWT Token
+	 * @return Token 內的所有 Claims
 	 */
 	private Claims extractAllClaims(String token) {
 		return Jwts.parserBuilder()

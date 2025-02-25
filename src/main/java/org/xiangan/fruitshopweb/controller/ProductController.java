@@ -7,18 +7,16 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.NotNull;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.xiangan.fruitshopweb.entity.Person;
 import org.xiangan.fruitshopweb.entity.Product;
 import org.xiangan.fruitshopweb.enumType.ProductTypeEnum;
 import org.xiangan.fruitshopweb.enumType.UnitTypeEnum;
 import org.xiangan.fruitshopweb.exception.CustomException;
 import org.xiangan.fruitshopweb.model.PaginationRequest;
-import org.xiangan.fruitshopweb.service.PersonService;
 import org.xiangan.fruitshopweb.service.ProductService;
 
 import java.math.BigDecimal;
@@ -28,33 +26,20 @@ import java.util.concurrent.ExecutionException;
 
 /**
  * 產品
+ *
+ * @author kyle
  */
-@RestController
 @RequestMapping("/product")
+@RequiredArgsConstructor
+@RestController
 @Slf4j
-@Tag(name = "產品 api",description = "產品的 CRUD")
+@Tag(name = "產品 api",description = "維護產品的相關操作")
 public class ProductController {
 
 	/**
 	 * (服務層) 產品
 	 */
 	private final ProductService productService;
-
-	/**
-	 * (服務層) 人員
-	 */
-	private final PersonService personService;
-
-	/**
-	 * 依賴注入
-	 * @param productService the productService
-	 * @param personService the personService
-	 */
-	@Autowired
-	public ProductController(ProductService productService, PersonService personService) {
-		this.productService = productService;
-		this.personService = personService;
-	}
 
 	/**
 	 * 瀏覽
@@ -154,43 +139,7 @@ public class ProductController {
 	) {
 		return productService.create(productName, unitPrice, type, unitType, personId, inventory);
 	}
-	
-//	/**
-//	 * 刪除
-//	 *
-//	 * @param id 主鍵
-//	 * @return 是否刪除
-//	 */
-//	@DeleteMapping("/{id:^\\d+$}")
-//	Boolean delete(@PathVariable final long id) {
-//		person person;
-//		try {
-//			person = personService.load(id).get();
-//		} catch (InterruptedException | ExecutionException exception) {
-//			throw new RuntimeException(
-//				String.format(
-//					"讀取人員「%d」時拋出線程中斷異常：%s❗",
-//					id,
-//					exception.getLocalizedMessage()
-//				),
-//				exception
-//			);
-//		}
-//
-//		try {
-//			return personService.delete(person).get();
-//		} catch (InterruptedException | ExecutionException exception) {
-//			throw new RuntimeException(
-//				String.format(
-//					"刪除人員「%d」時拋出線程中斷異常：%s❗️",
-//					id,
-//					exception.getLocalizedMessage()
-//				),
-//				exception
-//			);
-//		}
-//	}
-	
+
 	/**
 	 * 讀取
 	 *

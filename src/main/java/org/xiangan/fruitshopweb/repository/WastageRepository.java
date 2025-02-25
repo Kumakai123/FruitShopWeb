@@ -7,6 +7,8 @@ import org.xiangan.fruitshopweb.entity.Wastage;
 
 /**
  * (數據存取對象)損耗單
+ *
+ * @author kyle
  */
 @Repository
 public interface WastageRepository extends JpaRepository<Wastage, Long>, JpaSpecificationExecutor<Wastage> {

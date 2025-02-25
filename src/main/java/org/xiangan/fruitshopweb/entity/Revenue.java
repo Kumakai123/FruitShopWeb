@@ -3,7 +3,6 @@ package org.xiangan.fruitshopweb.entity;
 import com.aventrix.jnanoid.jnanoid.NanoIdUtils;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 import java.math.BigDecimal;
@@ -142,7 +141,7 @@ public class Revenue {
 		if (o == null || getClass() != o.getClass())
 			return false;
 		Revenue revenue = (Revenue) o;
-		return id == revenue.id && Objects.equals(recordDate, revenue.recordDate) && Objects.equals(grossIncome, revenue.grossIncome) && Objects.equals(netIncome, revenue.netIncome) && Objects.equals(purchasesExpense, revenue.purchasesExpense) && Objects.equals(personnelExpenses, revenue.personnelExpenses) && Objects.equals(miscellaneousExpense, revenue.miscellaneousExpense) && Objects.equals(wastage, revenue.wastage);
+		return Objects.equals(id, revenue.id) && Objects.equals(recordDate, revenue.recordDate) && Objects.equals(grossIncome, revenue.grossIncome) && Objects.equals(netIncome, revenue.netIncome) && Objects.equals(purchasesExpense, revenue.purchasesExpense) && Objects.equals(personnelExpenses, revenue.personnelExpenses) && Objects.equals(miscellaneousExpense, revenue.miscellaneousExpense) && Objects.equals(wastage, revenue.wastage);
 	}
 	
 	@Override

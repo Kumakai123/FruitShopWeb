@@ -15,6 +15,8 @@ import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * 損耗表
+ *
+ * @author kyle
  */
 @Data
 @Entity

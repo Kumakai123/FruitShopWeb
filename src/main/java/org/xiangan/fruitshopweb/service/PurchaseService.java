@@ -1,7 +1,7 @@
 package org.xiangan.fruitshopweb.service;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.scheduling.annotation.Async;
@@ -14,7 +14,6 @@ import org.xiangan.fruitshopweb.exception.CustomException;
 import org.xiangan.fruitshopweb.repository.PurchaseRepository;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
@@ -22,7 +21,10 @@ import java.util.concurrent.ExecutionException;
 
 /**
  * 進貨單
+ *
+ * @author kyle
  */
+@RequiredArgsConstructor
 @Service
 @Slf4j
 public class PurchaseService {
@@ -36,17 +38,6 @@ public class PurchaseService {
 	 * (服務層) 產品
 	 */
 	private final ProductService productService;
-
-	/**
-	 * 依賴注入
-	 * @param purchaseRepository the purchaseRepository
-	 * @param productService the productService
-	 */
-	@Autowired
-	public PurchaseService(PurchaseRepository purchaseRepository, ProductService productService) {
-		this.purchaseRepository = purchaseRepository;
-		this.productService = productService;
-	}
 
 	/**
 	 * 建立

@@ -7,13 +7,15 @@ import org.xiangan.fruitshopweb.enumType.LevelEnum;
 
 /**
  * 註冊請求
+ *
+ * @author kyle
  */
 public record RegisterRequest(
 	String nickName
 	, @NotBlank String name
 	, LevelEnum level
 	, @Email @NotBlank String email
-	, @Size(min = 8, max = 20)String password
+	, @Size(min = 8)String password
 	, String phoneNumber
 	, String company
 ) {}

@@ -10,12 +10,13 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.Objects;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * 進貨
+ *
+ * @author kyle
  */
 @Data
 @Entity

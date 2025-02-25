@@ -1,7 +1,6 @@
 package org.xiangan.fruitshopweb.entity;
 
 import com.aventrix.jnanoid.jnanoid.NanoIdUtils;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -11,9 +10,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.xiangan.fruitshopweb.enumType.LevelEnum;
 import org.xiangan.fruitshopweb.enumType.LevelEnumConverter;
-import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.List;
@@ -22,12 +21,14 @@ import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * 貨主
+ *
+ * @author kyle
  */
-@Data
-@Builder
-@NoArgsConstructor
 @AllArgsConstructor
+@Builder
+@Data
 @Entity
+@NoArgsConstructor
 @Table(
 		name = "person",
 		uniqueConstraints = {
@@ -118,27 +119,6 @@ public class Person implements UserDetails {
 		}
 	}
 
-	/**
-	 *
-	 * @param nickName    姓氏
-	 * @param name   	  名字
-	 * @param level       身分等級
-	 * @param email       信箱
-	 * @param password    密碼
-	 * @param phoneNumber 連絡電話
-	 * @param company     公司行號/統編
-	 */
-	public Person(String nickName, String name, LevelEnum level, String email, String password,
-		String phoneNumber, String company) {
-		this.nickName = nickName;
-		this.name = name;
-		this.level = level;
-		this.email = email;
-		this.password = password;
-		this.phoneNumber = phoneNumber;
-		this.company = company;
-	}
-
 	@Override
 	public boolean equals(Object o) {
 		if (this == o)
@@ -146,7 +126,7 @@ public class Person implements UserDetails {
 		if (o == null || getClass() != o.getClass())
 			return false;
 		Person person = (Person) o;
-		return id == person.id && Objects.equals(nickName, person.nickName) &&
+		return Objects.equals(id, person.id) && Objects.equals(nickName, person.nickName) &&
 				Objects.equals(name, person.name) && Objects.equals(phoneNumber, person.phoneNumber)
 				&& Objects.equals(company, person.company);
 	}

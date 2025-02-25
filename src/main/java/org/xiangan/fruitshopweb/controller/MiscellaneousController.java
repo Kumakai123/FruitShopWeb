@@ -7,8 +7,8 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.NotNull;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
@@ -24,8 +24,6 @@ import org.xiangan.fruitshopweb.service.MiscellaneousService;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.Date;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
@@ -34,29 +32,20 @@ import java.util.concurrent.ExecutionException;
  * 雜物 <p>
  * 雜物是為了計算今日的瑣碎支出(例如:塑膠袋、手套、衛生紙...)，或是紀錄一般用品的開銷
  * 可以統計今日、週期、月份的支出
+ *
+ * @author kyle
  */
-@RestController
 @RequestMapping("amountSpend")
+@RequiredArgsConstructor
+@RestController
 @Slf4j
-@Tag(name = "雜物 api")
+@Tag(name = "雜物 api",description = "紀錄瑣碎的支出或是紀錄一般用品的開銷")
 public class MiscellaneousController {
 
-    /*
-
-     */
     /**
      * (服務層) 雜物
      */
     private final MiscellaneousService miscellaneousService;
-
-    /**
-     * 依賴注入
-     * @param miscellaneousService the miscellaneousService
-     */
-    @Autowired
-    public MiscellaneousController(MiscellaneousService miscellaneousService) {
-        this.miscellaneousService = miscellaneousService;
-    }
 
     /**
      * 瀏覽
@@ -163,15 +152,6 @@ public class MiscellaneousController {
             );
         }
     }
-
-//    Miscellaneous read(@PathVariable final long id) {
-//        try {
-//            return miscellaneousService.load(id).get();
-//        } catch (InterruptedException | ExecutionException exception) {
-//            throw new RuntimeException(String.format("讀取雜物「%s」時拋出線程中斷異常：%s❗", id,
-//                exception.getLocalizedMessage()), exception);
-//        }
-//    }
 
     /**
      * 建立

@@ -9,6 +9,27 @@ import io.swagger.v3.oas.models.security.SecurityScheme;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+/**
+ * OpenAPI 設定。
+ * <p>
+ * 負責設定 OpenAPI 規範，讓應用程式能夠產生 API 文件（Swagger UI）。
+ * 包含 API 的基本資訊、聯絡方式，以及 JWT 身份驗證的安全性設定。
+ * </p>
+ *
+ * <h2>設定內容：</h2>
+ * <ul>
+ *   <li>API 標題、版本、描述</li>
+ *   <li>聯絡人資訊</li>
+ *   <li>Bearer Token（JWT）身份驗證</li>
+ *   <li>API 存取權限</li>
+ * </ul>
+ *
+ * <h3>安全性設定：</h3>
+ * 採用 JWT 作為身份驗證機制，透過 `BearerAuth` 保護 API 端點。<br>
+ * 註冊 `SecurityScheme` 並應用於 `SecurityRequirement`。
+ *
+ * @author kyle
+ */
 @Configuration
 public class OpenAPIConfig {
 

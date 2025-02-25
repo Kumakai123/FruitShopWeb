@@ -13,6 +13,8 @@ import java.util.Date;
 
 /**
  * (數據存取對象)雜物
+ *
+ * @author kyle
  */
 @Repository
 public interface MiscellaneousRepository

@@ -17,12 +17,14 @@ import org.xiangan.fruitshopweb.service.AuthenticationService;
 
 /**
  * 身分驗證
+ *
+ * @author kyle
  */
-@RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
-@Tag(name = "身分驗證",description = "包含註冊、登出等身分驗證之API")
+@RestController
 @Slf4j
+@Tag(name = "身分驗證",description = "包含註冊、登出等身分驗證之API")
 public class AuthenticationController {
 
 	/**
@@ -37,6 +39,7 @@ public class AuthenticationController {
 	 */
 	@Operation(
 		summary = "註冊"
+		,description = "密碼長度不可小於8碼"
 		,responses = {
 		@ApiResponse(responseCode = "200", description = "Success", useReturnTypeSchema = true)
 		,@ApiResponse(responseCode = "400", description = "參數有誤", content = @Content)

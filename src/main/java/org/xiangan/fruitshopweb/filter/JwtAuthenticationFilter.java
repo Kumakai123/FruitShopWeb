@@ -19,6 +19,11 @@ import org.xiangan.fruitshopweb.service.PersonService;
 
 import java.io.IOException;
 
+/**
+ * Jwt 驗證過濾器
+ *
+ * @author kyle
+ */
 @Component
 @RequiredArgsConstructor
 @Slf4j

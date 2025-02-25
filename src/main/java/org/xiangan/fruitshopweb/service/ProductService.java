@@ -1,8 +1,8 @@
 package org.xiangan.fruitshopweb.service;
 
 import jakarta.persistence.criteria.Predicate;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.scheduling.annotation.Async;
@@ -11,7 +11,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.xiangan.fruitshopweb.entity.Person;
 import org.xiangan.fruitshopweb.entity.Product;
 import org.xiangan.fruitshopweb.entity.Product_;
-import org.xiangan.fruitshopweb.enumType.LevelEnum;
 import org.xiangan.fruitshopweb.enumType.ProductTypeEnum;
 import org.xiangan.fruitshopweb.enumType.UnitTypeEnum;
 import org.xiangan.fruitshopweb.exception.CustomException;
@@ -26,7 +25,10 @@ import java.util.concurrent.ExecutionException;
 
 /**
  * 產品
+ *
+ * @author kyle
  */
+@RequiredArgsConstructor
 @Service
 @Slf4j
 public class ProductService {
@@ -40,18 +42,6 @@ public class ProductService {
 	 * (服務層) 人員
 	 */
 	private final PersonService personService;
-
-	/**
-	 * 依賴注入
-	 *
-	 * @param productRepository the productRepository
-	 * @param personService the personService
-	 */
-	@Autowired
-	public ProductService(ProductRepository productRepository, PersonService personService) {
-		this.productRepository = productRepository;
-		this.personService = personService;
-	}
 
 	/**
 	 * 建立

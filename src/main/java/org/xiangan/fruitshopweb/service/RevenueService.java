@@ -1,7 +1,7 @@
 package org.xiangan.fruitshopweb.service;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.scheduling.annotation.Async;
@@ -14,34 +14,27 @@ import org.xiangan.fruitshopweb.repository.RevenueRepository;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
 /**
- * 營業狀況
+ * 營收狀況
+ *
+ * @author kyle
  */
+@RequiredArgsConstructor
 @Service
 @Slf4j
 public class RevenueService {
 
 	/**
-	 * (數據存取對象)營業狀況
+	 * (數據存取對象)營收狀況
 	 */
 	private final RevenueRepository revenueRepository;
 
 	/**
-	 * 依賴注入
-	 * @param revenueRepository the revenueRepository
-	 */
-	@Autowired
-	public RevenueService(RevenueRepository revenueRepository) {
-		this.revenueRepository = revenueRepository;
-	}
-
-	/**
-	 * @param entity 營業狀況
+	 * @param entity 營收狀況
 	 * @return 是否成功刪除
 	 */
 	@Async
@@ -140,7 +133,7 @@ public class RevenueService {
 
 	/**
 	 * @param id 主鍵
-	 * @return 營業狀況
+	 * @return 營收狀況
 	 */
 	@Async
 	@Transactional(readOnly = true)
@@ -159,7 +152,7 @@ public class RevenueService {
 	}
 
 	/**
-	 * @param entity 營業狀況
+	 * @param entity 營收狀況
 	 * @return 持久化營業狀況
 	 */
 	@Async

@@ -5,6 +5,8 @@ import lombok.Getter;
 
 /**
  * 身分等級
+ *
+ * @author kyle
  */
 @Getter
 @JsonSerialize(using = LevelEnumSerializer.class)

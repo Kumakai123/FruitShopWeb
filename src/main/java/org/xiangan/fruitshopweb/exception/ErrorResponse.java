@@ -4,15 +4,14 @@ import lombok.Getter;
 
 import java.time.LocalDateTime;
 
-import lombok.Getter;
-import java.time.LocalDateTime;
-
 /**
  * 表示 API 錯誤回應的資料模型。
  * <p>
  * 此類別通常在處理例外或錯誤請求時使用，
  * 將錯誤相關資訊以標準格式回傳給用戶端。
  * </p>
+ *
+ * @author kyle
  */
 @Getter
 public class ErrorResponse {

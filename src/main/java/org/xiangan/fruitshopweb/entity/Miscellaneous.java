@@ -9,11 +9,12 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * 雜物
+ *
+ * @author kyle
  */
 @Data
 @Entity

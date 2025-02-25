@@ -16,6 +16,8 @@ import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * 產品
+ *
+ * @author kyle
  */
 @Data
 @Entity
@@ -87,8 +89,17 @@ public class Product {
 		referencedColumnName = "id"
 	)
 	@ManyToOne(optional = false)
-	@JsonIgnoreProperties({"nickName", "level", "company", "enabled", "username", "authorities",
-		"accountNonExpired", "credentialsNonExpired", "accountNonLocked"})
+	@JsonIgnoreProperties
+		({    "nickName"
+			, "level"
+			, "company"
+			, "enabled"
+			, "username"
+			, "authorities"
+			, "accountNonExpired"
+			, "credentialsNonExpired"
+			, "accountNonLocked"
+		})
 	private Person person;
 	
 	/**

@@ -7,6 +7,8 @@ import lombok.Data;
 /**
  * API 回應模板
  * @param <T>
+ *
+ * @author kyle
  */
 @AllArgsConstructor
 @Builder

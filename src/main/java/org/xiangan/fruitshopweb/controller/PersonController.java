@@ -25,12 +25,14 @@ import java.util.concurrent.ExecutionException;
 
 /**
  * 人員
+ *
+ * @author kyle
  */
-@RestController
 @RequestMapping("/consignor")
 @RequiredArgsConstructor
+@RestController
 @Slf4j
-@Tag(name = "人員 api",description = "人員的 CRUD")
+@Tag(name = "人員 api",description = "維護人員的相關操作")
 public class PersonController {
 
 	/**
@@ -107,6 +109,7 @@ public class PersonController {
 	 */
 	@Operation(
 		summary = "建立人員資料"
+		,description = "密碼長度不可小於8碼"
 		,responses = {
 			@ApiResponse(responseCode = "200", description = "Success", useReturnTypeSchema = true)
 			,@ApiResponse(responseCode = "400", description = "參數有誤", content = @Content)
@@ -135,7 +138,7 @@ public class PersonController {
 			,@Parameter(name = "name",description = "名字",in = ParameterIn.QUERY,example = "陳浩銘")
 			,@Parameter(name = "level",description = "身分等級",in = ParameterIn.QUERY,example = "CONSIGNOR")
 			,@Parameter(name = "email",description = "信箱",in = ParameterIn.QUERY,example = "abc123@gmail.com")
-			,@Parameter(name = "password",description = "密碼",in = ParameterIn.QUERY,example = "test")
+			,@Parameter(name = "password",description = "密碼(長度不可小於8碼)",in = ParameterIn.QUERY,example = "test1234")
 			,@Parameter(name = "phoneNumber",description = "連絡電話",in = ParameterIn.QUERY,example = "0912345678")
 			,@Parameter(name = "company",description = "公司行號/統編",in = ParameterIn.QUERY,example = "test123")
 			,@Parameter(name = "id",description = "人員主鍵 UUID(十碼)")}

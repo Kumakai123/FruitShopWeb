@@ -8,8 +8,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.validation.annotation.Validated;
@@ -24,26 +24,20 @@ import java.util.concurrent.ExecutionException;
 
 /**
  * 損耗單
+ *
+ * @author kyle
  */
-@RestController
 @RequestMapping("/wastage")
+@RequiredArgsConstructor
+@RestController
 @Slf4j
-@Tag(name = "損耗單 api")
+@Tag(name = "損耗單 api",description = "紀錄損耗的產品，助於分析成本、優化庫存管理")
 public class WastageController {
 
 	/**
 	 * (服務層) 損耗單
 	 */
 	private final WastageService wastageService;
-
-	/**
-	 * 依賴注入
-	 * @param wastageService the wastageService
-	 */
-	@Autowired
-	public WastageController(WastageService wastageService) {
-		this.wastageService = wastageService;
-	}
 
 	/**
 	 * 瀏覽

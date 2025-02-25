@@ -21,9 +21,11 @@ import java.util.concurrent.ExecutionException;
 
 /**
  * 身分驗證
+ *
+ * @author kyle
  */
-@Service
 @RequiredArgsConstructor
+@Service
 @Slf4j
 public class AuthenticationService {
 	/**

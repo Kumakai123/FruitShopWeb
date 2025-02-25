@@ -7,6 +7,7 @@ package org.xiangan.fruitshopweb.exception;
  * <p>當遇到需要中斷正常流程且屬於應用程式自訂的錯誤時，可拋出此例外。</p>
  *
  * @see RuntimeException
+ * @author kyle
  */
 public class CustomException extends RuntimeException{
 

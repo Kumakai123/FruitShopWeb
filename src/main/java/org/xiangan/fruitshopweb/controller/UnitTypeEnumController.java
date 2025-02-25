@@ -19,8 +19,8 @@ import org.xiangan.fruitshopweb.exception.CustomException;
  *
  * @author kyle
  */
-@RestController
 @RequestMapping("unitType")
+@RestController
 @Tag(name = "單位類型 Enum api")
 public class UnitTypeEnumController {
 

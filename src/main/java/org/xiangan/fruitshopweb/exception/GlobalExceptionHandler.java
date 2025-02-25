@@ -19,6 +19,8 @@ import java.util.NoSuchElementException;
  * 此類別使用 {@code @ControllerAdvice} 來集中管理應用程式中的例外處理邏輯，
  * 可統一回傳標準化的錯誤資訊，提升維護性及一致性。
  * </p>
+ *
+ * @author kyle
  */
 @ControllerAdvice
 public class GlobalExceptionHandler {
@@ -205,17 +207,17 @@ public class GlobalExceptionHandler {
 //        );
 //    }
 
-    /**
-     * 處理通用例外 {@code Exception} (對應 500 狀態碼)。
-     * <p>
-     * 當系統出現未預期的錯誤 (如程式錯誤或系統異常) 時，
-     * 會返回包含錯誤訊息及提示用戶聯繫系統管理員的標準回應。
-     * </p>
-     *
-     * @param ex 觸發此處理程序的例外
-     * @param request 當前的 WebRequest 請求內容
-     * @return 標準格式的錯誤回應 {@link ErrorResponse} 及 HTTP 500 狀態碼
-     */
+//    /**
+//     * 處理通用例外 {@code Exception} (對應 500 狀態碼)。
+//     * <p>
+//     * 當系統出現未預期的錯誤 (如程式錯誤或系統異常) 時，
+//     * 會返回包含錯誤訊息及提示用戶聯繫系統管理員的標準回應。
+//     * </p>
+//     *
+//     * @param ex 觸發此處理程序的例外
+//     * @param request 當前的 WebRequest 請求內容
+//     * @return 標準格式的錯誤回應 {@link ErrorResponse} 及 HTTP 500 狀態碼
+//     */
 //    @ExceptionHandler(Exception.class)
 //    public ResponseEntity<ErrorResponse> handleGenericException(
 //        Exception ex, WebRequest request) {

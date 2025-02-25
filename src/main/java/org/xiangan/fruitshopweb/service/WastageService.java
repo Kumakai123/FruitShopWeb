@@ -1,7 +1,7 @@
 package org.xiangan.fruitshopweb.service;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.scheduling.annotation.Async;
@@ -14,14 +14,16 @@ import org.xiangan.fruitshopweb.exception.CustomException;
 import org.xiangan.fruitshopweb.repository.WastageRepository;
 
 import java.util.Date;
-import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
 /**
  * 損耗單
+ *
+ * @author kyle
  */
+@RequiredArgsConstructor
 @Service
 @Slf4j
 public class WastageService {
@@ -35,17 +37,6 @@ public class WastageService {
 	 * (服務層) 產品
 	 */
 	private final ProductService productService;
-
-	/**
-	 * 依賴注入
-	 * @param wastageRepository the wastageRepository
-	 * @param productService the productService
-	 */
-	@Autowired
-	public WastageService(WastageRepository wastageRepository, ProductService productService) {
-		this.wastageRepository = wastageRepository;
-		this.productService = productService;
-	}
 
 	/**
 	 * 建立

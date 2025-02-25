@@ -19,8 +19,8 @@ import org.xiangan.fruitshopweb.exception.CustomException;
  *
  * @author kyle
  */
-@RestController
 @RequestMapping("productType")
+@RestController
 @Tag(name = "產品類型 Enum api")
 public class ProductTypeEnumController {
 
