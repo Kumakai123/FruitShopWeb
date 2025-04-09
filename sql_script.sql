@@ -37,7 +37,7 @@ CREATE TABLE IF NOT EXISTS fruitshop.product
     unit_price   DECIMAL(10, 2) NOT NULL DEFAULT 0 COMMENT '產品單價',
     type         VARCHAR(50)             DEFAULT NULL COMMENT '類型',
     unit_type    VARCHAR(50)             DEFAULT NULL COMMENT '單位',
-    person    CHAR(36)                DEFAULT NULL COMMENT '貨主',
+    person       CHAR(36)                DEFAULT NULL COMMENT '貨主',
     inventory    DECIMAL(10, 2) NOT NULL DEFAULT 0 COMMENT '庫存',
     UNIQUE KEY uq_product_name_unit_price (product_name, unit_price),
     CONSTRAINT fk_product_consignor FOREIGN KEY (person)

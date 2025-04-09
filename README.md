@@ -1,6 +1,5 @@
 # **XiangAnFruit_Server**
-
-祥安水果記帳系統
+祥安水果營運管理系統
 
 ## **專案大綱**
 
@@ -18,9 +17,14 @@ Swagger Demo:http://localhost:8000/swagger-ui/index.html
     - **用戶認證與授權**（Authentication & Authorization），確保 API 只有合法用戶能夠存取。
     - **角色管理**（如普通用戶與管理員），根據不同權限設定 API 存取規則。
     - 整合 **JWT（JSON Web Token）** 進行 API 認證，實現無狀態身份驗證，確保請求的安全性。
-4. **Docker 容器化**
+4. **全域異常處理**
+   - 建立集中式例外處理機制，透過 `@ControllerAdvice` 攔截應用程式中可能發生的錯誤（如找不到資源、重複鍵、參數格式錯誤等），提升 API 回應一致性與系統健壯性。
+   - 客製化回應格式 `ErrorResponse`，統一回傳結構化錯誤資訊（狀態碼、標題、訊息、路徑），方便前端處理錯誤顯示與日後除錯。
+   - 支援輸入驗證錯誤（`HandlerMethodValidationException`）、查無資料（`NoSuchElementException`）與資料重複（`DuplicateKeyException`）等常見場景，讓 API 更具備容錯能力。
+   - 所有錯誤皆紀錄詳細 log，方便在日誌中追蹤與調查問題來源。
+5. **Docker 容器化**
     - 使用 **Docker** 部署應用，整合 MySQL 容器，實現快速部署和測試。
-5. **Swagger 套件**
+6. **Swagger 套件**
     - 整合 Swagger UI，直覺式 API 文件與即時測試，提升開發效率與前後端協作。
 
 ## **未來規劃**
@@ -60,20 +64,20 @@ src
 ├── main
 │   ├── java
 │   │   └── org.xiangan.fruitshopweb
-│   │       ├── controller       # 控制層（處理 API 請求）
-│   │       ├── entity           # 資料庫實體類
-│   │       ├── repository       # 資料層（資料庫操作）
-│   │       ├── service          # 服務層（業務邏輯）
+│   │       ├── configuration          # 設定相關（如 Swagger、Security）
+│   │       ├── controller             # 控制層（處理 API 請求）
+│   │       ├── entity                 # 資料庫實體類
+│   │       ├── enumType               # 列舉型別（定義固定值）
+│   │       ├── exception              # 自定義例外處理
+│   │       ├── filter                 # 過濾器（如 JWT 驗證等）
+│   │       ├── model                  # 請求與回應模型（DTO、VO）
+│   │       ├── repository             # 資料層（資料庫操作）
+│   │       ├── service                # 服務層（業務邏輯）
 │   │       └── FruitShopWebApplication.java  # 主程序入口
 │   └── resources
-│       ├── application.properties  # 配置文件
-│       └── static                 # 靜態資源（未來用於前端整合）
+│       └── application.properties     # 配置文件
 └── test
-    ├── java                       # 測試代碼目錄
+    └── java
+        └── org.xiangan.fruitshopweb   # 單元測試與整合測試
 ```
 
-## TODO
-
-~~1. add the "person" table.~~ </p>
-~~2. Optimize the foreign key relationship between the "consignor" and "person" tables.~~ </p>
-3. 使用排程計算營運狀況(視情況再加入Line Message API 通知手機功能)
