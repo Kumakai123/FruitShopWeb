@@ -40,7 +40,7 @@ CREATE TABLE IF NOT EXISTS fruitshop.product
     person       CHAR(36)                DEFAULT NULL COMMENT '貨主',
     inventory    DECIMAL(10, 2) NOT NULL DEFAULT 0 COMMENT '庫存',
     UNIQUE KEY uq_product_name_unit_price (product_name, unit_price),
-    CONSTRAINT fk_product_consignor FOREIGN KEY (person)
+    CONSTRAINT fk_product_person FOREIGN KEY (person)
         REFERENCES fruitshop.person (id)
         ON UPDATE CASCADE ON DELETE SET NULL
 ) COMMENT ='產品';
